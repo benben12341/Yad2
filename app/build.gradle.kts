@@ -37,6 +37,7 @@ android {
         jvmTarget = "1.8"
     }
     buildFeatures {
+        dataBinding = true
         compose = true
     }
     composeOptions {
@@ -81,7 +82,7 @@ dependencies {
     implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
     implementation ("androidx.appcompat:appcompat:1.4.0")
     implementation ("com.google.android.material:material:1.5.0")
-    implementation ("com.google.android.gms:play-services-tasks:19.0.1")
+    implementation ("com.google.android.gms:play-services-tasks:18.0.1")
     implementation ("com.google.firebase:firebase-auth:21.0.1")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

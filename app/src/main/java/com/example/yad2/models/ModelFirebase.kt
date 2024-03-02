@@ -168,9 +168,13 @@ class ModelFirebase {
 
     private fun createProductList(products: MutableList<Product>, task: Task<QuerySnapshot>) {
         for (product in task.result) {
-            val productToAdd: Product = Product.create(Objects.requireNonNull(product.data))
-            productToAdd.id = product.id
-            products.add(productToAdd)
+            val productToAdd: Product? = Product.create(Objects.requireNonNull(product.data))
+            if (productToAdd != null) {
+                productToAdd.id = product.id
+            }
+            if (productToAdd != null) {
+                products.add(productToAdd)
+            }
         }
     }
 
@@ -178,11 +182,11 @@ class ModelFirebase {
         db.collection(PRODUCTS_COLLECTION_NAME)
             .document(productId!!)
             .get()
-            .addOnCompleteListener(object : OnCompleteListener<DocumentSnapshot?>() {
+            .addOnCompleteListener(object : OnCompleteListener<DocumentSnapshot?> {
                 override fun onComplete(task: Task<DocumentSnapshot?>) {
                     var product: Product? = null
                     if (task.isSuccessful and (task.result != null)) {
-                        product = Product.create(task.result?.getData())
+                        product = task.result?.getData()?.let { Product.create(it) }
                         if (product != null) {
                             product.id = task.result!!.id
                         }
@@ -223,7 +227,7 @@ class ModelFirebase {
                     val document: DocumentSnapshot = task.result
                     if (document.exists()) {
                         user[0] = document.toObject(User::class.java)
-                        val favoriteProducts: ArrayList<String> = user[0].getFavoriteProducts()
+                        val favoriteProducts: ArrayList<String>? = user[0]?.favoriteProducts
                         if (favoriteProducts != null) {
                             if (favoriteProducts.stream().count() != 0L) {
                                 for (i in favoriteProducts.indices) {
@@ -235,12 +239,16 @@ class ModelFirebase {
                                             if (productsTask.isSuccessful) {
                                                 val result: DocumentSnapshot =
                                                     productsTask.result
-                                                val productToAdd: Product =
+                                                val productToAdd: Product? =
                                                     Product.create(Objects.requireNonNull(result.data))
-                                                productToAdd.id = result.id
-                                                if (!productToAdd.isDeleted) {
-                                                    products.add(productToAdd)
-                                                    myProductsListener.onComplete(products)
+                                                if (productToAdd != null) {
+                                                    productToAdd.id = result.id
+                                                }
+                                                if (productToAdd != null) {
+                                                    if (!productToAdd.isDeleted) {
+                                                        products.add(productToAdd)
+                                                        myProductsListener.onComplete(products)
+                                                    }
                                                 }
                                             }
                                         }

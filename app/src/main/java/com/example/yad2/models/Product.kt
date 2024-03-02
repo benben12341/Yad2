@@ -24,6 +24,31 @@ data class Product(
     var isSold: Boolean = false
 ) {
     companion object {
+        fun create(json: Map<String?, Any?>): Product? {
+            val id = json["id"] as String?
+            val title = json["title"] as String?
+            val description = json["description"] as String?
+            val price = json["price"] as String?
+            val gender = json["gender"] as String?
+            val condition = json["condition"] as String?
+            val productCategory = json["productCategory"] as String?
+            val imageUrl = json["imageUrl"] as String?
+            val contactId = json["contactId"] as String?
+            val ts = json["updateDate"] as Timestamp?
+            val updateDate = ts!!.seconds
+            val latitude = json["latitude"] as Double?
+            val longitude = json["longitude"] as Double?
+            val isDeleted = json.containsKey("isDeleted") && json["isDeleted"] as Boolean
+            val isSold = json.containsKey("isSold") && json["isSold"] as Boolean
+            val product: Product = Product(
+                id.toString(), title, description, gender, condition,
+                productCategory, price, contactId, latitude, longitude, isDeleted, isSold
+            )
+            product.imageUrl = imageUrl
+            product.updateDate = updateDate
+            return product
+        }
+
         const val PRODUCTS_COLLECTION_NAME = "products"
     }
 
@@ -62,30 +87,5 @@ data class Product(
         json["isDeleted"] = isDeleted
         json["isSold"] = isSold
         return json
-    }
-
-     fun create(json: Map<String?, Any?>): Product? {
-        val id = json["id"] as String?
-        val title = json["title"] as String?
-        val description = json["description"] as String?
-        val price = json["price"] as String?
-        val gender = json["gender"] as String?
-        val condition = json["condition"] as String?
-        val productCategory = json["productCategory"] as String?
-        val imageUrl = json["imageUrl"] as String?
-        val contactId = json["contactId"] as String?
-        val ts = json["updateDate"] as Timestamp?
-        val updateDate = ts!!.seconds
-        val latitude = json["latitude"] as Double?
-        val longitude = json["longitude"] as Double?
-        val isDeleted = json.containsKey("isDeleted") && json["isDeleted"] as Boolean
-        val isSold = json.containsKey("isSold") && json["isSold"] as Boolean
-        val product: Product = Product(
-            id.toString(), title, description, gender, condition,
-            productCategory, price, contactId, latitude, longitude, isDeleted, isSold
-        )
-        product.imageUrl = imageUrl
-        product.updateDate = updateDate
-        return product
     }
 }
