@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragments.HomeFragment">
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintStart_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <RelativeLayout
+                android:id="@+id/filters_buttons"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                app:layout_constraintStart_toEndOf="parent">
+
+                <Button
+                    android:id="@+id/category_filter_bv"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_marginTop="10dp"
+                    android:text="choose category" />
+            </RelativeLayout>
+        </LinearLayout>
+
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/productslist_swiperefresh"
+            android:layout_width="wrap_content"
+            android:layout_height="600dp"
+            android:layout_below="@+id/linearFiltersList"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/productslist_rv"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+            </androidx.recyclerview.widget.RecyclerView>
+
+
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+
+
+        <LinearLayout
+            android:id="@+id/linearFiltersList"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/linearLayout"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toTopOf="@id/productslist_swiperefresh"
+            app:layout_constraintTop_toBottomOf="@id/linearLayout">
+
+            <ScrollView
+                android:id="@+id/type_filters_scroll_view"
+                android:layout_width="match_parent"
+                android:layout_height="110dp"
+                android:layout_below="@+id/linearLayout"
+                android:layout_marginTop="0dp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/productslist_swiperefresh">
+
+                <androidx.fragment.app.FragmentContainerView
+                    android:id="@+id/filter_fragment"
+                    android:name="com.example.old2gold.fragments.FilterFragment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:isScrollContainer="true"
+                    android:nestedScrollingEnabled="true" />
+            </ScrollView>
+
+            <ScrollView
+                android:id="@+id/sizes_scroll_view"
+                android:layout_width="match_parent"
+                android:layout_height="110dp"
+                android:layout_below="@+id/linearLayout"
+                android:layout_marginTop="0dp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/productslist_swiperefresh">
+
+                <androidx.fragment.app.FragmentContainerView
+                    android:id="@+id/sizes_fragment"
+                    android:name="com.example.old2gold.fragments.SizeFragment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="250dp"
+                    android:isScrollContainer="true"
+                    android:nestedScrollingEnabled="true" />
+            </ScrollView>
+        </LinearLayout>
+
+
+    </RelativeLayout>
+    <ProgressBar
+        android:id="@+id/products_home_progress_bar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="75dp"
+        android:layout_height="64dp"
+        app:layout_constraintBottom_toBottomOf="@+id/relativeLayout2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/relativeLayout2"
+        app:layout_constraintVertical_bias="0.439"
+        android:indeterminateTint="@color/purple_200"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

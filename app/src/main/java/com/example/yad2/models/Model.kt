@@ -43,16 +43,13 @@ class Model private constructor() {
         fun onComplete(user: User)
     }
 
-    interface UpdateDataListener {
+    fun interface UpdateDataListener {
         fun onComplete()
     }
 
-    interface SaveImageListener {
+    fun interface SaveImageListener {
         fun onComplete(url: String)
     }
-
-    val productListLoadingState: LiveData<ProductsListLoadingState>
-        get() = productListLoadingState
 
     val userProductsLoadingState: LiveData<ProductsListLoadingState>
         get() = userProductsLoadingState
