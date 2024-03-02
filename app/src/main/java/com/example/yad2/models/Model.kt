@@ -1,10 +1,10 @@
 package com.example.yad2.models
 
-import com.example.yad2.models.UserSS
 import android.content.Context
 import android.graphics.Bitmap
 import android.os.Build
 import android.util.Log
+import android.view.MenuItem
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -206,7 +206,7 @@ class Model private constructor() {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    fun getUser(id: String, optionalListener: GetLoggedUserListener): User {
+    fun getUser(id: String, optionalListener: (User) -> MenuItem): User {
         return modelFirebase.getUser(id, optionalListener)
     }
 
