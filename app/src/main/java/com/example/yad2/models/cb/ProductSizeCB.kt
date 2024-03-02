@@ -1,8 +1,11 @@
 package com.example.yad2.models.cb
 
-import com.example.old2gold.enums.Size
+import com.example.yad2.enums.Size
 
 class ProductSizeCB private constructor(var productSize: String) {
+    fun getProductSize(): String? {
+        return this.productSize
+    }
     fun setProductTypes(productType: String) {
         productSize = productType
     }
@@ -12,10 +15,10 @@ class ProductSizeCB private constructor(var productSize: String) {
     companion object {
         val allCheckboxSizes: List<ProductSizeCB>
             get() {
-                val productFilterCBList: List<ProductSizeCB> = ArrayList()
-                val productSizes: Array<Size> = Size.values()
+                val productFilterCBList: MutableList<ProductSizeCB> = mutableListOf()
+                val productSizes: Array<Size> = Size.entries.toTypedArray()
                 for (i in productSizes.indices) {
-                    productFilterCBList.add(i, ProductSizeCB(productSizes[i].getProductSize()))
+                    productFilterCBList.add(i, ProductSizeCB(productSizes[i].getProductSize()!!))
                 }
                 return productFilterCBList
             }

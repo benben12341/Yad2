@@ -1,5 +1,13 @@
+package com.example.yad2.models
+
 import android.util.Log
 import androidx.room.Entity
+import androidx.room.PrimaryKey
+import lombok.AllArgsConstructor
+import lombok.Getter
+import lombok.NoArgsConstructor
+import lombok.Setter
+import org.json.JSONException
 import org.json.JSONObject
 import java.io.Serializable
 
@@ -17,7 +25,7 @@ class User(
     var favoriteProducts: ArrayList<String>?
 ) : Serializable {
     @PrimaryKey
-    var id: String = null
+    var id: String? = null
     var userImageUrl: String? = null
     fun toJson(): Map<String, Any?> {
         val json: MutableMap<String, Any?> = HashMap()
@@ -54,13 +62,11 @@ class User(
                 Log.d("error", "failed getting user favorite product")
             }
             return User(
-                id,
                 firstName,
                 lastName,
                 email,
                 phoneNumber,
                 address,
-                userImageUrl,
                 favoriteProducts
             )
         }

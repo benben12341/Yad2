@@ -1,7 +1,7 @@
 package com.example.yad2.viewModels
 
-import Model
-import Product
+import com.example.yad2.models.Model
+import com.example.yad2.models.Product
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData

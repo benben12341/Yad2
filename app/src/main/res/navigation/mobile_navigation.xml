@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_home">
+
+    <fragment
+        android:id="@+id/nav_home"
+        android:name="com.example.old2gold.fragments.HomeFragment"
+        android:label="@string/menu_home"
+        tools:layout="@layout/fragment_home" />
+    <action
+        android:id="@+id/nav_home_to_nav_product_details"
+        app:destination="@id/nav_product_details" />
+    <fragment
+        android:id="@+id/nav_my_products"
+        android:name="com.example.old2gold.fragments.UserProductsFragment"
+        android:label="@string/menu_my_products"
+        tools:layout="@layout/fragment_my_products" />
+    <action
+        android:id="@+id/nav_my_products_to_nav_product_details"
+        app:destination="@id/nav_product_details" />
+    <action
+        android:id="@+id/nav_my_products_to_nav_add_product"
+        app:destination="@id/nav_add_or_edit_product" />
+    <fragment
+        android:id="@+id/nav_favorites"
+        android:name="com.example.old2gold.fragments.MyProductsFragment"
+        android:label="@string/menu_liked_items"
+        tools:layout="@layout/fragment_liked_products" />
+    <action
+        android:id="@+id/nav_liked_products_to_nav_product_details"
+        app:destination="@id/nav_product_details" />
+    <fragment
+        android:id="@+id/nav_product_details"
+        android:name="com.example.old2gold.fragments.ProductDetailsFragment"
+        android:label="Details"
+        tools:layout="@layout/fragment_product_details">
+        <argument
+            android:name="productId"
+            app:argType="string" />
+        <action
+            android:id="@+id/nav_product_details_to_nav_add_product"
+            app:destination="@id/nav_add_or_edit_product" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_add_or_edit_product"
+        android:name="com.example.old2gold.fragments.AddOrEditProductFragment"
+        tools:layout="@layout/fragment_add_or_edit_product">
+        <argument
+            android:name="productId"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
+    tools:layout="@layout/fragment_add_product" />
+    <fragment
+        android:id="@+id/nav_user_profile"
+        android:name="com.example.old2gold.fragments.UserProfileFragment"
+        android:label="User Profile"
+        tools:layout="@layout/fragment_user_profile" />
+    <fragment
+        android:id="@+id/other_user_profile"
+        android:name="com.example.old2gold.fragments.UserProfileFragment"
+        android:label="User Profile"
+        tools:layout="@layout/fragment_user_profile" />
+    <fragment
+        android:id="@+id/edit_user_profile"
+        android:name="com.example.old2gold.fragments.EditUserDetailsFragment"
+        android:label="User Profile"
+        tools:layout="@layout/fragment_edit_user_details" />
+    <fragment
+        android:id="@+id/nav_map_view"
+        android:name="com.example.old2gold.fragments.MapFragment"
+        android:label="Map View"
+        tools:layout="@layout/fragment_map" />
+
+    <action
+        android:id="@+id/nav_map_view_to_nav_product_details"
+        app:destination="@id/nav_product_details" />
+    <action
+        android:id="@+id/to_nav_favorites"
+        app:destination="@id/nav_favorites" />
+    <action
+        android:id="@+id/to_nav_my_products"
+        app:destination="@id/nav_my_products" />
+    <action
+        android:id="@+id/to_edit_user_details"
+        app:destination="@id/edit_user_profile" />
+    <action
+        android:id="@+id/to_nav_user_profile"
+        app:destination="@id/nav_user_profile" />
+    <action
+        android:id="@+id/to_other_user_profile"
+        app:destination="@id/other_user_profile" />
+</navigation>
