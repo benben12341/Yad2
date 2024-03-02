@@ -1,10 +1,30 @@
 package com.example.yad2.models
 
-import Model
+import com.example.yad2.models.User
 import android.graphics.Bitmap
 import android.os.Build
 import android.util.Log
-import com.example.old2gold.model.Product.PRODUCTS_COLLECTION_NAME
+import androidx.annotation.RequiresApi
+import com.example.yad2.interfaces.AddLikedProductListener
+import com.example.yad2.interfaces.GetAllProductsListener
+import com.example.yad2.interfaces.GetLikedProductsListener
+import com.example.yad2.interfaces.GetMyProductsListener
+import com.example.yad2.interfaces.GetProductById
+import com.example.yad2.interfaces.RemoveLikedProductsListener
+import com.example.yad2.models.Product.Companion.PRODUCTS_COLLECTION_NAME
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.gms.tasks.OnSuccessListener
+import com.google.android.gms.tasks.Task
+import com.google.firebase.Timestamp
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
+import com.google.firebase.storage.UploadTask
 import java.io.ByteArrayOutputStream
 import java.util.Objects
 
@@ -12,30 +32,10 @@ class ModelFirebase {
     var db: FirebaseFirestore = FirebaseFirestore.getInstance()
     var storage: FirebaseStorage = FirebaseStorage.getInstance()
 
-    interface GetAllProductsListener {
-        fun onComplete(list: List<Product>?)
-    }
-
-    interface GetLikedProductsListener {
-        fun onComplete(list: List<Product>?)
-    }
-
-    interface GetMyProductsListener {
-        fun onComplete(list: List<Product>?)
-    }
-
-    interface RemoveLikedProductsListener {
-        fun onComplete()
-    }
-
-    interface AddLikedProductListener {
-        fun onComplete()
-    }
-
-    fun saveProduct(product: Product, listener: AddProductListener) {
-        val json: Map<String, Any> = product.toJson()
-        db.collection(Product.PRODUCTS_COLLECTION_NAME)
-            .document(product.getId())
+    fun saveProduct(product: Product, listener: Model.AddProductListener) {
+        val json: Map<String, Any?> = product.toJson()
+        db.collection(PRODUCTS_COLLECTION_NAME)
+            .document(product.id)
             .set(json)
             .addOnSuccessListener { unused -> listener.onComplete() }
             .addOnFailureListener { e -> listener.onComplete() }
@@ -44,59 +44,59 @@ class ModelFirebase {
     fun saveImage(
         imageBitmap: Bitmap,
         imageName: String,
-        listener: SaveImageListener,
+        listener: Model.SaveImageListener,
         directory: String
     ) {
-        val storageRef: StorageReference = storage.getReference()
+        val storageRef: StorageReference = storage.reference
         val imgRef: StorageReference = storageRef.child("$directory/$imageName")
         val baos = ByteArrayOutputStream()
         imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
         val data = baos.toByteArray()
         val uploadTask: UploadTask = imgRef.putBytes(data)
-        uploadTask.addOnFailureListener { exception -> listener.onComplete(null) }
-            .addOnSuccessListener(object : OnSuccessListener<UploadTask.TaskSnapshot?>() {
-                fun onSuccess(taskSnapshot: UploadTask.TaskSnapshot?) {
-                    imgRef.getDownloadUrl()
+        uploadTask.addOnFailureListener { exception -> listener.onComplete(null.toString()) }
+            .addOnSuccessListener(object : OnSuccessListener<UploadTask.TaskSnapshot?> {
+                override fun onSuccess(taskSnapshot: UploadTask.TaskSnapshot?) {
+                    imgRef.downloadUrl
                         .addOnSuccessListener { uri -> listener.onComplete(uri.toString()) }
                 }
             })
     }
 
     fun addUser(user: User, id: String?) {
-        val json: Map<String, Any> = user.toJson()
+        val json: Map<String, Any?> = user.toJson()
         db.collection(User.COLLECTION_NAME)
-            .document(id)
+            .document(id!!)
             .set(json)
     }
 
-    fun updateUser(updatedUser: User, listener: UpdateDataListener) {
-        val json: Map<String, Any> = updatedUser.toJson()
+    fun updateUser(updatedUser: User, listener: Model.UpdateDataListener) {
+        val json: Map<String, Any?> = updatedUser.toJson()
         db.collection(User.COLLECTION_NAME)
-            .document(updatedUser.getId())
+            .document(updatedUser.id.toString())
             .set(json)
             .addOnCompleteListener { unused -> listener.onComplete() }
     }
 
-    fun getUser(id: String?, optionalListener: GetLoggedUserListener): User? {
+    fun getUser(id: String?, optionalListener: Model.GetLoggedUserListener): User? {
         val user: Array<User?> = arrayOfNulls<User>(1)
         if (id != null) {
             val docRef: DocumentReference = db.collection(User.COLLECTION_NAME)
                 .document(id)
             docRef.get()
-                .addOnCompleteListener(object : OnCompleteListener<DocumentSnapshot?>() {
+                .addOnCompleteListener(object : OnCompleteListener<DocumentSnapshot?> {
                     @RequiresApi(api = Build.VERSION_CODES.N)
-                    fun onComplete(task: Task<DocumentSnapshot?>) {
-                        if (task.isSuccessful()) {
-                            val document: DocumentSnapshot = task.getResult()
+                    override fun onComplete(task: Task<DocumentSnapshot?>) {
+                        if (task.isSuccessful) {
+                            val document: DocumentSnapshot = task.result!!
                             if (document.exists()) {
                                 user[0] = document.toObject(User::class.java)
-                                user[0].setId(document.getId())
-                                optionalListener.onComplete(user[0])
+                                user[0]?.id = document.id.toString()
+                                optionalListener.onComplete(user[0]!!)
                             } else {
                                 Log.d("TAG", "No such document")
                             }
                         } else {
-                            Log.d("TAG", "get failed with ", task.getException())
+                            Log.d("TAG", "get failed with ", task.exception)
                         }
                     }
                 })
@@ -104,64 +104,61 @@ class ModelFirebase {
         return user[0]
     }
 
-    fun getProductSellerUser(id: String?, optionalListener: GetLoggedUserListener): User? {
+    fun getProductSellerUser(id: String?, optionalListener: Model.GetLoggedUserListener): User? {
         val user: Array<User?> = arrayOfNulls<User>(1)
         val docRef: DocumentReference = db.collection(User.COLLECTION_NAME)
-            .document(id)
+            .document(id!!)
         docRef.get()
-            .addOnCompleteListener(object : OnCompleteListener<DocumentSnapshot?>() {
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val document: DocumentSnapshot = task.result!!
+                    if (document.exists()) {
+                        user[0] = document.toObject(User::class.java)
+                        user[0]?.id = document.id
+                    } else {
+                        Log.d("TAG", "No such document")
+                    }
+                    optionalListener.onComplete(user[0]!!)
+                } else {
+                    Log.d("TAG", "get failed with ", task.exception)
+                }
+            }
+        return user[0]
+    }
+
+    fun getUserO(id: String?, optionalListener: Model.GetLoggedUserListener): User? {
+        val user: Array<User?> = arrayOfNulls<User>(1)
+        val docRef: DocumentReference = db.collection(User.COLLECTION_NAME)
+            .document(id!!)
+        docRef.get()
+            .addOnCompleteListener(object : OnCompleteListener<DocumentSnapshot?> {
                 @RequiresApi(api = Build.VERSION_CODES.N)
-                fun onComplete(task: Task<DocumentSnapshot?>) {
-                    if (task.isSuccessful()) {
-                        val document: DocumentSnapshot = task.getResult()
+                override fun onComplete(task: Task<DocumentSnapshot?>) {
+                    if (task.isSuccessful) {
+                        val document: DocumentSnapshot = task.result!!
                         if (document.exists()) {
                             user[0] = document.toObject(User::class.java)
-                            user[0].setId(document.getId())
+                            user[0]?.id = document.id
                         } else {
                             Log.d("TAG", "No such document")
                         }
-                        optionalListener.onComplete(user[0])
+                        optionalListener.onComplete(user[0]!!)
                     } else {
-                        Log.d("TAG", "get failed with ", task.getException())
+                        Log.d("TAG", "get failed with ", task.exception)
                     }
                 }
             })
         return user[0]
     }
 
-    fun getUserO(id: String?, optionalListener: GetLoggedUserListener): User? {
-        val user: Array<User?> = arrayOfNulls<User>(1)
-        val docRef: DocumentReference = db.collection(User.COLLECTION_NAME)
-            .document(id)
-        docRef.get()
-            .addOnCompleteListener(object : OnCompleteListener<DocumentSnapshot?>() {
-                @RequiresApi(api = Build.VERSION_CODES.N)
-                fun onComplete(task: Task<DocumentSnapshot?>) {
-                    if (task.isSuccessful()) {
-                        val document: DocumentSnapshot = task.getResult()
-                        if (document.exists()) {
-                            user[0] = document.toObject(User::class.java)
-                            user[0].setId(document.getId())
-                        } else {
-                            Log.d("TAG", "No such document")
-                        }
-                        optionalListener.onComplete(user[0])
-                    } else {
-                        Log.d("TAG", "get failed with ", task.getException())
-                    }
-                }
-            })
-        return user[0]
-    }
-
-    fun getAllProducts(lastUpdateDate: Long?, listener: GetAllProductsListener): List<Product> {
+    fun getAllProducts(lastUpdateDate: Long, listener: GetAllProductsListener): List<Product> {
         val products: MutableList<Product> = ArrayList<Product>()
         db.collection(PRODUCTS_COLLECTION_NAME)
             .whereGreaterThanOrEqualTo("updateDate", Timestamp(lastUpdateDate, 0))
             .orderBy("updateDate", Query.Direction.DESCENDING)
             .get()
             .addOnCompleteListener { task ->
-                if (task.isSuccessful()) {
+                if (task.isSuccessful) {
                     createProductList(products, task)
                 }
                 listener.onComplete(products)
@@ -170,23 +167,25 @@ class ModelFirebase {
     }
 
     private fun createProductList(products: MutableList<Product>, task: Task<QuerySnapshot>) {
-        for (product in task.getResult()) {
-            val productToAdd: Product = Product.create(Objects.requireNonNull(product.getData()))
-            productToAdd.setId(product.getId())
+        for (product in task.result) {
+            val productToAdd: Product = Product.create(Objects.requireNonNull(product.data))
+            productToAdd.id = product.id
             products.add(productToAdd)
         }
     }
 
     fun getProductById(productId: String?, listener: GetProductById) {
-        db.collection(Product.PRODUCTS_COLLECTION_NAME)
-            .document(productId)
+        db.collection(PRODUCTS_COLLECTION_NAME)
+            .document(productId!!)
             .get()
             .addOnCompleteListener(object : OnCompleteListener<DocumentSnapshot?>() {
-                fun onComplete(task: Task<DocumentSnapshot?>) {
+                override fun onComplete(task: Task<DocumentSnapshot?>) {
                     var product: Product? = null
-                    if (task.isSuccessful() and (task.getResult() != null)) {
-                        product = Product.create(task.getResult().getData())
-                        product.setId(task.getResult().getId())
+                    if (task.isSuccessful and (task.result != null)) {
+                        product = Product.create(task.result?.getData())
+                        if (product != null) {
+                            product.id = task.result!!.id
+                        }
                     }
                     listener.onComplete(product)
                 }
@@ -201,7 +200,7 @@ class ModelFirebase {
             .orderBy("updateDate", Query.Direction.DESCENDING)
             .get()
             .addOnCompleteListener { task ->
-                if (task.isSuccessful()) {
+                if (task.isSuccessful) {
                     createProductList(products, task)
                 }
                 myProductsListener.onComplete(products)
@@ -217,11 +216,11 @@ class ModelFirebase {
         val user: Array<User?> = arrayOfNulls<User>(1)
         val products: MutableList<Product> = ArrayList<Product>()
         db.collection(User.COLLECTION_NAME)
-            .document(id)
+            .document(id!!)
             .get()
             .addOnCompleteListener { task ->
-                if (task.isSuccessful()) {
-                    val document: DocumentSnapshot = task.getResult()
+                if (task.isSuccessful) {
+                    val document: DocumentSnapshot = task.result
                     if (document.exists()) {
                         user[0] = document.toObject(User::class.java)
                         val favoriteProducts: ArrayList<String> = user[0].getFavoriteProducts()
@@ -233,13 +232,13 @@ class ModelFirebase {
                                         .document(favoriteProducts[i])
                                         .get()
                                         .addOnCompleteListener { productsTask ->
-                                            if (productsTask.isSuccessful()) {
+                                            if (productsTask.isSuccessful) {
                                                 val result: DocumentSnapshot =
-                                                    productsTask.getResult()
+                                                    productsTask.result
                                                 val productToAdd: Product =
-                                                    Product.create(Objects.requireNonNull(result.getData()))
-                                                productToAdd.setId(result.getId())
-                                                if (!productToAdd.isDeleted()) {
+                                                    Product.create(Objects.requireNonNull(result.data))
+                                                productToAdd.id = result.id
+                                                if (!productToAdd.isDeleted) {
                                                     products.add(productToAdd)
                                                     myProductsListener.onComplete(products)
                                                 }
@@ -254,14 +253,14 @@ class ModelFirebase {
                         Log.d("TAG", "No such document")
                     }
                 } else {
-                    Log.d("TAG", "get failed with ", task.getException())
+                    Log.d("TAG", "get failed with ", task.exception)
                 }
             }
         return products
     }
 
     fun addToLikedProducts(productId: String?, addLikedProductListener: AddLikedProductListener) {
-        val userId: String = Model.instance.mAuth.getUid()
+        val userId: String = Model.instance.mAuth.uid.toString()
         db.collection(User.COLLECTION_NAME)
             .document(userId)
             .update("favoriteProducts", FieldValue.arrayUnion(productId))
@@ -273,7 +272,7 @@ class ModelFirebase {
         productId: String?,
         removeLikedProductsListener: RemoveLikedProductsListener
     ) {
-        val userId: String = Model.instance.mAuth.getUid()
+        val userId: String = Model.instance.mAuth.uid.toString()
         db.collection(User.COLLECTION_NAME)
             .document(userId)
             .update("favoriteProducts", FieldValue.arrayRemove(productId))

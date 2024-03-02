@@ -1,12 +1,12 @@
-package com.example.yad2.viewModels
+package com.example.old2gold.model
 
-import Model
-import Product
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.yad2.models.Model
+import com.example.yad2.models.Product
 import java.util.logging.Filter
 
 class ProductListRvViewModel : ViewModel() {
@@ -16,7 +16,7 @@ class ProductListRvViewModel : ViewModel() {
     private val filters = MutableLiveData<Set<Filter>>()
     @RequiresApi(api = Build.VERSION_CODES.N)
     fun addTypeFilter(categories: List<String?>?) {
-        Model.instance.getProductListByTypeFilter(categories)
+        Model.instance.getProductListByTypeFilter(categories as List<String>)
     }
 
     init {
@@ -29,6 +29,6 @@ class ProductListRvViewModel : ViewModel() {
         Model.instance.refreshProductsList()
     }
 
-    val data: LiveData<List<Any>>
+    val data: LiveData<List<Product>>
         get() = filteredProducts
 }
