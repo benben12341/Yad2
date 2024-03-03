@@ -23,7 +23,12 @@
         </activity>
         <activity
             android:name="com.example.yad2.activities.RegisterActivity"
-            android:exported="true"></activity>
+            android:exported="true" />
+        <activity
+            android:name="com.example.yad2.activities.MainActivity"
+            android:exported="true"
+            android:label="yad2"
+            android:theme="@style/Theme.Yad2.NoActionBar" />
     </application>
 
 </manifest>
