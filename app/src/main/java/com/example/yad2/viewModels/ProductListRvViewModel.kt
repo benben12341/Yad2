@@ -1,4 +1,4 @@
-package com.example.old2gold.model
+package com.example.yad2.viewModels
 
 import android.os.Build
 import androidx.annotation.RequiresApi

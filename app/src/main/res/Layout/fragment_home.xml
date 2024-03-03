@@ -64,7 +64,6 @@
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 
-
         <LinearLayout
             android:id="@+id/linearFiltersList"
             android:layout_width="fill_parent"
@@ -87,7 +86,7 @@
 
                 <androidx.fragment.app.FragmentContainerView
                     android:id="@+id/filter_fragment"
-                    android:name="com.example.old2gold.fragments.FilterFragment"
+                    android:name="com.example.yad2.fragments.FilterFragment"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:isScrollContainer="true"
@@ -106,7 +105,7 @@
 
                 <androidx.fragment.app.FragmentContainerView
                     android:id="@+id/sizes_fragment"
-                    android:name="com.example.old2gold.fragments.SizeFragment"
+                    android:name="com.example.yad2.fragments.SizeFragment"
                     android:layout_width="wrap_content"
                     android:layout_height="250dp"
                     android:isScrollContainer="true"
@@ -116,16 +115,17 @@
 
 
     </RelativeLayout>
+
     <ProgressBar
         android:id="@+id/products_home_progress_bar"
         style="?android:attr/progressBarStyle"
         android:layout_width="75dp"
         android:layout_height="64dp"
+        android:indeterminateTint="@color/purple_200"
         app:layout_constraintBottom_toBottomOf="@+id/relativeLayout2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/relativeLayout2"
-        app:layout_constraintVertical_bias="0.439"
-        android:indeterminateTint="@color/purple_200"/>
+        app:layout_constraintVertical_bias="0.439" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
