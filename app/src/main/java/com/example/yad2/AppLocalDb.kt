@@ -19,7 +19,7 @@ abstract class AppLocalDbRepository : RoomDatabase() {
 
 object AppLocalDb {
     var db: AppLocalDbRepository = Room.databaseBuilder(
-        MyApplication.getContext(),
+        MyApplication.context,
         AppLocalDbRepository::class.java,
         "dbFile.db"
     )
