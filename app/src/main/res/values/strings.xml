@@ -1,3 +1,35 @@
 <resources>
     <string name="app_name">Yad2</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_home">Home</string>
+    <string name="menu_my_products">My Products</string>
+    <string name="menu_liked_items">Items You Like</string>
+    <string name="menu_map_view">Map View</string>
+    <string name="menu_sign_out">Sign Out</string>
+    <string name="gender">Gender</string>
+    <string name="category">Category</string>
+    <string name="condition">Condition</string>
+    <string name="title">Title</string>
+    <string name="description">Description</string>
+    <string name="publish">Publish</string>
+    <string name="price">Price</string>
+    <string name="textview">TextView</string>
+    <string name="filters">Filter</string>
+    <string name="product_type_title">Product Type</string>
+    <string name="product_size_filter">Product Size</string>
+    <string name="product_description_label">Description:</string>
+    <string name="product_description_default">no description</string>
+    <string name="product_condition_label">Condition:</string>
+    <string name="product_condition_default">Other</string>
+    <string name="product_category_default">Other</string>
+    <string name="product_category_label">Category:</string>
+    <string name="product_gender_label">Gender:</string>
+    <string name="product_gender_default">Other</string>
+
 </resources>
