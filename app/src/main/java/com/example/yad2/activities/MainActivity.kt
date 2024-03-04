@@ -1,4 +1,4 @@
-package com.example.old2gold
+package com.example.yad2.activities
 
 import android.content.Intent
 import android.os.Build
@@ -19,13 +19,12 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI.navigateUp
 import androidx.navigation.ui.NavigationUI.setupActionBarWithNavController
 import androidx.navigation.ui.NavigationUI.setupWithNavController
-import com.example.yad2.databinding.ActivityMainBinding
+import com.example.yad2.R
 import com.example.yad2.fragments.UserProfileFragment
 import com.example.yad2.viewModels.MainViewModel
 import com.example.yad2.models.Model
 import com.example.yad2.models.User
-import com.example.yad2.R
-import com.example.yad2.activities.LoginActivity
+import com.example.yad2.databinding.ActivityMainBinding
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.squareup.picasso.Picasso
@@ -44,26 +43,26 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
-        viewModel.getData().observe(this) { user ->
+        viewModel?.getData()?.observe(this) { user : User ->
             val userImage =
                 headerView!!.findViewById<ImageView>(R.id.imageView)
-            if (user.getUserImageUrl() != null) {
+            if (user.userImageUrl != null) {
                 Picasso.get()
-                    .load(user.getUserImageUrl())
+                    .load(user.userImageUrl)
                     .into(userImage)
             }
             val userName =
                 headerView!!.findViewById<TextView>(R.id.idUserName)
-            userName.setText(user.getFirstName() + " " + user.getLastName())
+            userName.setText(user.firstName + " " + user.lastName)
         }
         binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.getRoot())
-        setSupportActionBar(binding.appBarMain.toolbar)
-        drawer = binding.drawerLayout
-        val navigationView: NavigationView = binding.navView
+        setContentView(binding!!.getRoot())
+        setSupportActionBar(binding!!.appBarMain.findViewById(R.id.toolbar))
+        drawer = binding!!.drawerLayout
+        val navigationView: NavigationView = binding!!.navView
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
-        mAppBarConfiguration = Builder(
+        mAppBarConfiguration = AppBarConfiguration.Builder(
             R.id.nav_home,
             R.id.nav_my_products,
             R.id.nav_favorites,
@@ -83,29 +82,32 @@ class MainActivity : AppCompatActivity() {
         mAuth = FirebaseAuth.getInstance()
         if (mAuth!!.currentUser != null) {
             headerView = navigationView.getHeaderView(0)
-            Model.instance.getUser(mAuth!!.currentUser!!.uid) { user ->
+            Model.instance.getUser(mAuth!!.currentUser!!.uid) { user: User ->
                 val userName =
-                    headerView.findViewById<TextView>(R.id.idUserName)
-                userName.setText(user.getFirstName() + " " + user.getLastName())
+                    headerView?.findViewById<TextView>(R.id.idUserName)
+                userName?.setText(user.firstName + " " + user.lastName)
                 val userImage =
-                    headerView.findViewById<ImageView>(R.id.imageView)
-                if (user.getUserImageUrl() != null) {
+                    headerView?.findViewById<ImageView>(R.id.imageView)
+                if (user.userImageUrl != null) {
                     Picasso.get()
-                        .load(user.getUserImageUrl())
+                        .load(user.userImageUrl)
                         .into(userImage)
                 }
                 currentUser = user
                 val imageView =
-                    headerView.findViewById<ImageView>(R.id.imageView)
-                imageView.setOnClickListener { navigateToUserProfile() }
+                    headerView?.findViewById<ImageView>(R.id.imageView)
+                if (imageView != null) {
+                    imageView.setOnClickListener { navigateToUserProfile() }
+                }
                 navigationView.menu.findItem(R.id.nav_user_profile)
                     .setOnMenuItemClickListener { menuItem: MenuItem? ->
                         navigateToUserProfile()
                         true
                     }
             }
-            val mail = headerView.findViewById<TextView>(R.id.idMail)
-            mail.text = mAuth!!.currentUser!!.email
+
+            val mail = headerView?.findViewById<TextView>(R.id.idMail)
+            mail?.text = mAuth!!.currentUser!!.email
         }
     }
 
