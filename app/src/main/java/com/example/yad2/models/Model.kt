@@ -9,7 +9,6 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.yad2.AppLocalDb
-import com.example.yad2.interfaces.GetProductById
 import com.google.firebase.auth.FirebaseAuth
 import java.security.AccessController.getContext
 import java.util.*
@@ -35,12 +34,16 @@ class Model private constructor() {
         LOADED
     }
 
-    interface AddProductListener {
+    fun interface AddProductListener {
         fun onComplete()
     }
 
     interface GetLoggedUserListener {
         fun onComplete(user: User)
+    }
+
+    fun interface GetProductById {
+        fun onComplete(product: Product?)
     }
 
     fun interface UpdateDataListener {
@@ -219,7 +222,7 @@ class Model private constructor() {
         return modelFirebase.getProductSellerUser(id, optionalListener)
     }
 
-    fun getProductById(productId: String, listener: GetProductById) {
+    fun getProductById(productId: String, listener: Any) {
         modelFirebase.getProductById(productId, listener)
     }
 
