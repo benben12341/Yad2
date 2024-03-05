@@ -1,7 +1,7 @@
 package com.example.yad2.viewModels
 
-import Model
-import User
+import com.example.yad2.models.Model
+import com.example.yad2.models.User
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
@@ -11,7 +11,7 @@ class MainViewModel @RequiresApi(api = Build.VERSION_CODES.N) constructor() : Vi
     var data: LiveData<User?>
 
     init {
-        data = Model.instance.getLoggedUser()
+        data = Model.instance.loggedUser
     }
 
     fun getData(): LiveData<User?> {
