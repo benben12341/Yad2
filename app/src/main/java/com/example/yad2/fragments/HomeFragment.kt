@@ -58,7 +58,7 @@ class HomeFragment : Fragment() {
         adapter!!.setOnItemClickListener(object : OnItemClickListener {
             override fun onItemClick(v: View?, position: Int) {
                 val productId: String = viewModel?.data?.value?.get(position)?.id.toString()
-                findNavController(v).navigate(
+                findNavController(v!!).navigate(
                     HomeFragmentDirections.navHomeToNavProductDetails(
                         productId
                     )

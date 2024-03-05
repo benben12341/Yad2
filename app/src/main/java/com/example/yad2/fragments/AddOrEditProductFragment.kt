@@ -21,10 +21,12 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation.findNavController
+import com.example.yad2.R
 import com.example.yad2.enums.Gender
 import com.example.yad2.enums.ProductCategory
 import com.example.yad2.enums.ProductCondition
@@ -41,6 +43,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import com.google.firebase.database.FirebaseDatabase
 import com.squareup.picasso.Picasso
 import lombok.SneakyThrows
 import java.util.Arrays
@@ -111,8 +114,7 @@ class AddOrEditProductFragment : Fragment() {
 
     private fun setProductDetails() {
         productId?.let {
-            Model.instance.getProductById(productId!!,  Model.GetProductById() {
-                @RequiresApi(api = Build.VERSION_CODES.N)
+            Model.instance.getProductById(productId!!) {
                 fun onComplete(product: Product) {
                     title?.text = product.title
                     val productPrice: String? = product.price
@@ -143,7 +145,7 @@ class AddOrEditProductFragment : Fragment() {
                     }
                     isSold = product.isSold
                 }
-            })
+            }
         }
     }
 
@@ -263,8 +265,8 @@ class AddOrEditProductFragment : Fragment() {
                     .toString() else ProductCategory.OTHER.toString(),
                 Objects.requireNonNull<EditText>(price?.editText).text.toString(),
                 Model.instance.mAuth.getUid(),
-                if (currLocation != null) currLocation.latitude else null,
-                if (currLocation != null) currLocation.longitude else null,
+                if (currLocation != null) currLocation!!.latitude else null,
+                if (currLocation != null) currLocation!!.longitude else null,
                 false,
                 if (isEditMode) isSold else false
             )

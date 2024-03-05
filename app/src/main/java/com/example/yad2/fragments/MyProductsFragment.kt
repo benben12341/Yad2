@@ -56,7 +56,7 @@ class MyProductsFragment : Fragment() {
         ) { list1: List<Error?>? -> refresh() }
         adapter!!.setOnItemClickListener(object : OnItemClickListener {
             override fun onItemClick(v: View?, position: Int) {
-                val stId: String = viewModel?.getData()?.getValue()?.get(position).getId()
+                val stId: String = viewModel?.getData()?.getValue()?.get(position)!!.id
                 if (v != null) {
                     findNavController(v).navigate(
                         MyProductsFragmentDirections.navLikedProductsToNavProductDetails(
@@ -97,7 +97,7 @@ class MyProductsFragment : Fragment() {
 
         @RequiresApi(api = Build.VERSION_CODES.N)
         override fun onBindViewHolder(holder: CardViewHolder, position: Int) {
-            val product: Product = viewModel?.getData()?.getValue()?.get(position)
+            val product: Product = viewModel?.getData()?.getValue()?.get(position)!!
             holder.bind(product)
         }
 

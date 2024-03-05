@@ -1,7 +1,7 @@
 package com.example.yad2.activities
 
-import Model
-import User
+import com.example.yad2.models.Model
+import com.example.yad2.models.User
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
@@ -20,6 +20,10 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.example.yad2.R
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.AuthResult
+import lombok.SneakyThrows
 
 class RegisterActivity : AppCompatActivity() {
     private var firstNameEdt: TextInputEditText? = null
@@ -37,7 +41,7 @@ class RegisterActivity : AppCompatActivity() {
     private var mAuth: FirebaseAuth? = null
     private var imageBitmap: Bitmap? = null
     private var progressBar: ProgressBar? = null
-    protected fun onCreate(savedInstanceState: Bundle?) {
+    protected override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
         firstNameEdt = findViewById(R.id.idEdtFirstName)
@@ -52,31 +56,31 @@ class RegisterActivity : AppCompatActivity() {
         mAuth = FirebaseAuth.getInstance()
         productImage = findViewById(R.id.productImage)
         camBtn = findViewById(R.id.cameraBtn)
-        camBtn.setOnClickListener { v -> openCam() }
+        camBtn?.setOnClickListener { v -> openCam() }
         galleryBtn = findViewById(R.id.galleryBtn)
-        galleryBtn.setOnClickListener { v -> openGallery() }
+        galleryBtn?.setOnClickListener { v -> openGallery() }
         progressBar = findViewById(R.id.register_progressBar)
         progressBar!!.visibility = View.GONE
 
         // adding on click for login tv.
         loginTV!!.setOnClickListener { // opening a login activity on clicking login text.
-            val i: Intent = Intent(this@`RegisterActivity.kt`, LoginActivity::class.java)
+            val i: Intent = Intent(this@RegisterActivity, LoginActivity::class.java)
             startActivity(i)
         }
 
         // adding click listener for register button.
         registerBtn!!.setOnClickListener {
             progressBar!!.visibility = View.GONE
-            val firstName: String = firstNameEdt.getText().toString()
-            val lastName: String = lastNameEdt.getText().toString()
-            val email: String = emailEdt.getText().toString()
-            val phoneNumber: String = phoneNumberEdt.getText().toString()
-            val address: String = addressEdt.getText().toString()
-            val pwd: String = passwordEdt.getText().toString()
-            val cnfPwd: String = confirmPwdEdt.getText().toString()
+            val firstName: String = firstNameEdt?.getText().toString()
+            val lastName: String = lastNameEdt?.getText().toString()
+            val email: String = emailEdt?.getText().toString()
+            val phoneNumber: String = phoneNumberEdt?.getText().toString()
+            val address: String = addressEdt?.getText().toString()
+            val pwd: String = passwordEdt?.getText().toString()
+            val cnfPwd: String = confirmPwdEdt?.getText().toString()
             if (pwd != cnfPwd && !TextUtils.isEmpty(pwd)) {
                 Toast.makeText(
-                    this@`RegisterActivity.kt`,
+                    this@RegisterActivity,
                     "Please check both having same password..",
                     Toast.LENGTH_SHORT
                 ).show()
@@ -85,7 +89,7 @@ class RegisterActivity : AppCompatActivity() {
                 ) || TextUtils.isEmpty(phoneNumber) || TextUtils.isEmpty(address)
             ) {
                 Toast.makeText(
-                    this@`RegisterActivity.kt`,
+                    this@RegisterActivity,
                     "Please make sure all fields are filled",
                     Toast.LENGTH_SHORT
                 ).show()
@@ -93,9 +97,9 @@ class RegisterActivity : AppCompatActivity() {
                 progressBar!!.visibility = View.VISIBLE
 
                 // on below line we are creating a new user by passing email and password.
-                mAuth.createUserWithEmailAndPassword(email, pwd)
-                    .addOnCompleteListener(object : OnCompleteListener<AuthResult?>() {
-                        fun onComplete(task: Task<AuthResult?>) {
+                mAuth!!.createUserWithEmailAndPassword(email, pwd)
+                    .addOnCompleteListener(object : OnCompleteListener<AuthResult?> {
+                        override fun onComplete(task: Task<AuthResult?>) {
                             // on below line we are checking if the task is success or not.
                             if (task.isSuccessful()) {
                                 val user = User(
@@ -104,33 +108,33 @@ class RegisterActivity : AppCompatActivity() {
                                     email,
                                     phoneNumber,
                                     address,
-                                    ArrayList<E>()
+                                    ArrayList()
                                 )
                                 if (imageBitmap != null) {
                                     Model.instance.saveUserImage(
-                                        imageBitmap,
+                                        imageBitmap!!,
                                         UUID.randomUUID().toString() + ".jpg"
                                     ) { url ->
                                         user.userImageUrl = url.toString();
                                         Model.instance.saveUser(
                                             user,
-                                            task.getResult().getUser().getUid()
+                                            task.getResult()?.getUser()!!.getUid()
                                         )
                                     }
                                 } else {
                                     Model.instance.saveUser(
                                         user,
-                                        task.getResult().getUser().getUid()
+                                        task.getResult()!!.getUser()!!.getUid()
                                     )
                                 }
                                 progressBar!!.visibility = View.GONE
                                 Toast.makeText(
-                                    this@`RegisterActivity.kt`,
+                                    this@RegisterActivity,
                                     "User Registered..",
                                     Toast.LENGTH_SHORT
                                 ).show()
                                 val i: Intent =
-                                    Intent(this@`RegisterActivity.kt`, LoginActivity::class.java)
+                                    Intent(this@RegisterActivity, LoginActivity::class.java)
                                 startActivity(i)
                                 finish()
                             } else {
@@ -138,7 +142,7 @@ class RegisterActivity : AppCompatActivity() {
                                 // in else condition we are displaying a failure toast message.
                                 progressBar!!.visibility = View.GONE
                                 Toast.makeText(
-                                    this@`RegisterActivity.kt`,
+                                    this@RegisterActivity,
                                     "Fail to register user..",
                                     Toast.LENGTH_SHORT
                                 ).show()
@@ -162,7 +166,7 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     @SneakyThrows
-    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == REQUEST_CAMERA) {
