@@ -54,9 +54,6 @@ class Model private constructor() {
         fun onComplete(url: String)
     }
 
-    val userProductsLoadingState: LiveData<ProductsListLoadingState>
-        get() = userProductsLoadingState
-
     val favoritesProductsLoadingState: LiveData<ProductsListLoadingState>
         get() = favoriteProductsLoadingState
 

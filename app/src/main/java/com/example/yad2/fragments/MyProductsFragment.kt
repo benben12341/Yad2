@@ -20,6 +20,7 @@ import com.example.yad2.models.Product
 import com.example.yad2.shared.CardViewHolder
 import com.example.yad2.shared.OnItemClickListener
 import com.example.yad2.viewModels.FavoriteProductListRvViewModel
+import com.example.yad2.R
 
 class MyProductsFragment : Fragment() {
     var viewModel: FavoriteProductListRvViewModel? = null
@@ -51,8 +52,8 @@ class MyProductsFragment : Fragment() {
         list.setAdapter(adapter)
         setHasOptionsMenu(true)
         viewModel?.getData()?.observe(
-            viewLifecycleOwner,
-            Observer<List<error.NonExistentClass?>> { list1: List<error.NonExistentClass?>? -> refresh() })
+            viewLifecycleOwner
+        ) { list1: List<Error?>? -> refresh() }
         adapter!!.setOnItemClickListener(object : OnItemClickListener {
             override fun onItemClick(v: View?, position: Int) {
                 val stId: String = viewModel?.getData()?.getValue()?.get(position).getId()
@@ -101,7 +102,7 @@ class MyProductsFragment : Fragment() {
         }
 
         override fun getItemCount(): Int {
-            return if (viewModel.getData().getValue() == null) {
+            return if (viewModel?.getData()?.value == null) {
                 0
             } else viewModel?.data?.value?.size!!.toInt()
         }

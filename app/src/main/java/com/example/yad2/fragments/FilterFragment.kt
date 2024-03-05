@@ -79,7 +79,7 @@ class FilterFragment : Fragment() {
         }
 
         override fun getItemCount(): Int {
-            TODO("Not yet implemented")
+            return types!!.size
         }
 
         override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
@@ -87,8 +87,5 @@ class FilterFragment : Fragment() {
             holder.cb.setChecked(productFilterCB.isFlag)
             holder.cb.setText(productFilterCB.productType)
         }
-
-        val itemCount: Int
-            get() = types!!.size
     }
 }
