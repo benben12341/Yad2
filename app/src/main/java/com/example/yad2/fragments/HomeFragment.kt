@@ -121,9 +121,5 @@ class HomeFragment : Fragment() {
             val product: Product? = viewModel?.data?.value?.get(position)
             holder.bind(product)
         }
-
-        val itemCount: Int?
-            get() = if (viewModel?.data?.value == null) 0
-            else viewModel?.data?.value?.size
     }
 }

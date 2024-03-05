@@ -12,7 +12,7 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.Navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.example.yad2.viewModels.ProductListRvViewModel
 import com.example.yad2.R
 import com.example.yad2.models.Product
@@ -28,6 +28,7 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.tasks.CancellationToken
 import com.google.android.gms.tasks.OnTokenCanceledListener
+import com.example.yad2.fragments.MapFragmentDirections
 
 class MapFragment : Fragment() {
     var viewModel: ProductListRvViewModel? = null
@@ -67,11 +68,13 @@ class MapFragment : Fragment() {
                     GoogleMap.OnInfoWindowClickListener {
                     override fun onInfoWindowClick(marker: Marker) {
                         val stId: String = (marker.getTag() as Product).id
-                        findNavController(view).navigate(
-                            MapFragmentDirections.navMapViewToNavProductDetails(
-                                stId
-                            )
-                        )
+                        findNavController().navigate(MapFragmentDirections.navMapViewToNavProductDetails(stId))
+
+//                        findNavController(view).navigate(
+//                            MapFragmentDirections.navMapViewToNavProductDetails(
+//                                stId
+//                            )
+//                        )
                     }
                 })
                 for (product in viewModel?.data?.getValue()!!) {

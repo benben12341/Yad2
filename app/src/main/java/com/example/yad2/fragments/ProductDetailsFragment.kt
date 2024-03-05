@@ -26,6 +26,7 @@ import com.example.yad2.viewModels.FavoriteProductListRvViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.squareup.picasso.Picasso
 import java.text.MessageFormat
+import com.example.yad2.R
 
 class ProductDetailsFragment() : Fragment() {
     var imageUrl: ImageView? = null
