@@ -1,5 +1,6 @@
 package com.example.yad2.activities
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -20,11 +21,11 @@ import androidx.navigation.ui.NavigationUI.navigateUp
 import androidx.navigation.ui.NavigationUI.setupActionBarWithNavController
 import androidx.navigation.ui.NavigationUI.setupWithNavController
 import com.example.yad2.R
+import com.example.yad2.databinding.ActivityMainBinding
 import com.example.yad2.fragments.UserProfileFragment
-import com.example.yad2.viewModels.MainViewModel
 import com.example.yad2.models.Model
 import com.example.yad2.models.User
-import com.example.yad2.databinding.ActivityMainBinding
+import com.example.yad2.viewModels.MainViewModel
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.squareup.picasso.Picasso
@@ -43,7 +44,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
-        viewModel?.getData()?.observe(this) { user : User ->
+        viewModel?.getData()?.observe(this) { user: User ->
             val userImage =
                 headerView!!.findViewById<ImageView>(R.id.imageView)
             if (user.userImageUrl != null) {
@@ -82,30 +83,32 @@ class MainActivity : AppCompatActivity() {
         mAuth = FirebaseAuth.getInstance()
         if (mAuth!!.currentUser != null) {
             headerView = navigationView.getHeaderView(0)
-            Model.instance.getUser(mAuth!!.currentUser!!.uid) { user: User ->
-                val userName =
-                    headerView?.findViewById<TextView>(R.id.idUserName)
-                userName?.setText(user.firstName + " " + user.lastName)
-                val userImage =
-                    headerView?.findViewById<ImageView>(R.id.imageView)
-                if (user.userImageUrl != null) {
-                    Picasso.get()
-                        .load(user.userImageUrl)
-                        .into(userImage)
-                }
-                currentUser = user
-                val imageView =
-                    headerView?.findViewById<ImageView>(R.id.imageView)
-                if (imageView != null) {
-                    imageView.setOnClickListener { navigateToUserProfile() }
-                }
-                navigationView.menu.findItem(R.id.nav_user_profile)
-                    .setOnMenuItemClickListener { menuItem: MenuItem? ->
-                        navigateToUserProfile()
-                        true
+            Model.instance.getUser(mAuth!!.currentUser!!.uid, object : Model.GetLoggedUserListener {
+                @SuppressLint("CutPasteId", "SetTextI18n")
+                override fun onComplete(user: User) {
+                    val userName =
+                        headerView?.findViewById<TextView>(R.id.idUserName)
+                    userName?.setText(user.firstName + " " + user.lastName)
+                    val userImage =
+                        headerView?.findViewById<ImageView>(R.id.imageView)
+                    if (user.userImageUrl != null) {
+                        Picasso.get()
+                            .load(user.userImageUrl)
+                            .into(userImage)
                     }
-            }
-
+                    currentUser = user
+                    val imageView =
+                        headerView?.findViewById<ImageView>(R.id.imageView)
+                    if (imageView != null) {
+                        imageView.setOnClickListener { navigateToUserProfile() }
+                    }
+                    navigationView.menu.findItem(R.id.nav_user_profile)
+                        .setOnMenuItemClickListener { menuItem: MenuItem? ->
+                            navigateToUserProfile()
+                            true
+                        }
+                }
+            });
             val mail = headerView?.findViewById<TextView>(R.id.idMail)
             mail?.text = mAuth!!.currentUser!!.email
         }

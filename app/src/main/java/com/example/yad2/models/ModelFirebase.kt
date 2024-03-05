@@ -1,6 +1,5 @@
 package com.example.yad2.models
 
-import com.example.yad2.models.User
 import android.graphics.Bitmap
 import android.os.Build
 import android.util.Log
@@ -9,7 +8,7 @@ import com.example.yad2.interfaces.AddLikedProductListener
 import com.example.yad2.interfaces.GetAllProductsListener
 import com.example.yad2.interfaces.GetLikedProductsListener
 import com.example.yad2.interfaces.GetMyProductsListener
-import com.example.yad2.interfaces.GetProductById
+import com.example.yad2.interfaces.GetProductByIdListener
 import com.example.yad2.interfaces.RemoveLikedProductsListener
 import com.example.yad2.models.Product.Companion.PRODUCTS_COLLECTION_NAME
 import com.google.android.gms.tasks.OnCompleteListener
@@ -178,7 +177,7 @@ class ModelFirebase {
         }
     }
 
-    fun getProductById(productId: String?, listener: GetProductById) {
+    fun getProductById(productId: String?, listener: GetProductByIdListener) {
         db.collection(PRODUCTS_COLLECTION_NAME)
             .document(productId!!)
             .get()

@@ -13,7 +13,7 @@ interface ProductDao {
     val all: List<Any?>?
 
     @Query("select * from Product where contactId=:id and isDeleted=0 order by updateDate desc")
-    fun getProductsByContactId(id: String?): List<Product?>?
+    fun getProductsByContactId(id: String?): List<Product>?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(vararg products: Product?)

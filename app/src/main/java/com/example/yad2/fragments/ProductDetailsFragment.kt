@@ -18,7 +18,7 @@ import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation.findNavController
-import com.example.yad2.interfaces.GetProductById
+import com.example.yad2.interfaces.GetProductByIdListener
 import com.example.yad2.models.Model
 import com.example.yad2.models.Product
 import com.example.yad2.models.User
@@ -58,7 +58,7 @@ class ProductDetailsFragment() : Fragment() {
         view = inflater.inflate(R.layout.fragment_product_details, container, false)
         val productId: String = ProductDetailsFragmentArgs.fromBundle(arguments).getProductId()
         attachFragmentElement(view)
-        Model.instance.getProductById(productId, object : GetProductById {
+        Model.instance.getProductById(productId, object : GetProductByIdListener {
             @RequiresApi(api = Build.VERSION_CODES.N)
             override fun onComplete(product: Product) {
                 setFragmentElements(product)
