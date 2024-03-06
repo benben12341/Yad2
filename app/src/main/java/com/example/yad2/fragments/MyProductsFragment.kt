@@ -1,62 +1,57 @@
 package com.example.yad2.fragments
 
+import android.annotation.SuppressLint
 import android.content.Context
-import android.view.LayoutInflater
-import android.os.Build
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
-import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.example.yad2.R
 import com.example.yad2.models.Model
 import com.example.yad2.models.Product
 import com.example.yad2.shared.CardViewHolder
 import com.example.yad2.shared.OnItemClickListener
 import com.example.yad2.viewModels.FavoriteProductListRvViewModel
-import com.example.yad2.R
 
 class MyProductsFragment : Fragment() {
     var viewModel: FavoriteProductListRvViewModel? = null
-    var adapter: MyAdapter? = null
-    var swipeRefresh: SwipeRefreshLayout? = null
-    var progressBar: ProgressBar? = null
+    private var adapter: MyAdapter? = null
+    private var swipeRefresh: SwipeRefreshLayout? = null
+    private var progressBar: ProgressBar? = null
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        viewModel = ViewModelProvider(this).get<FavoriteProductListRvViewModel>(
-            FavoriteProductListRvViewModel::class.java
-        )
+        viewModel = ViewModelProvider(this)[FavoriteProductListRvViewModel::class.java]
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?, savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         val view: View = inflater.inflate(R.layout.fragment_liked_products, container, false)
-        val list: RecyclerView = view.findViewById<RecyclerView>(R.id.like_products_itemslist_rv)
-        progressBar = view.findViewById<ProgressBar>(R.id.favorite_products_progress_bar)
+        val list: RecyclerView = view.findViewById(R.id.like_products_itemslist_rv)
+        progressBar = view.findViewById(R.id.favorite_products_progress_bar)
         progressBar?.visibility = View.GONE
-        view.findViewById<RecyclerView>(R.id.likedproductslist_swiperefresh).also { swipeRefresh = it }
-        swipeRefresh.setOnRefreshListener { Model.instance.refreshProductsILikedByUserList() }
+        view.findViewById<SwipeRefreshLayout>(R.id.likedproductslist_swiperefresh).also { swipeRefresh = it }
+        swipeRefresh?.setOnRefreshListener { Model.instance.refreshProductsILikedByUserList() }
         viewModel?.refreshFavoriteItems()
         list.setHasFixedSize(true)
-        list.setLayoutManager(LinearLayoutManager(context))
+        list.layoutManager = LinearLayoutManager(context)
         adapter = MyAdapter()
-        list.setAdapter(adapter)
+        list.adapter = adapter
         setHasOptionsMenu(true)
         viewModel?.getData()?.observe(
             viewLifecycleOwner
-        ) { list1: List<Error?>? -> refresh() }
+        ) { refresh() }
         adapter!!.setOnItemClickListener(object : OnItemClickListener {
             override fun onItemClick(v: View?, position: Int) {
-                val stId: String = viewModel?.getData()?.getValue()?.get(position)!!.id
+                val stId: String = viewModel?.getData()?.value?.get(position)!!.id
                 if (v != null) {
                     findNavController(v).navigate(
                         MyProductsFragmentDirections.navLikedProductsToNavProductDetails(
@@ -79,6 +74,12 @@ class MyProductsFragment : Fragment() {
         return view
     }
 
+    @SuppressLint("NotifyDataSetChanged")
+    private fun refresh() {
+        adapter!!.notifyDataSetChanged()
+        swipeRefresh?.isRefreshing = false
+    }
+
 
    inner class MyAdapter : RecyclerView.Adapter<CardViewHolder>() {
         var listener: OnItemClickListener? = null
@@ -95,9 +96,8 @@ class MyProductsFragment : Fragment() {
             return CardViewHolder(view, listener!!, context!!)
         }
 
-        @RequiresApi(api = Build.VERSION_CODES.N)
         override fun onBindViewHolder(holder: CardViewHolder, position: Int) {
-            val product: Product = viewModel?.getData()?.getValue()?.get(position)!!
+            val product: Product = viewModel?.getData()?.value?.get(position)!!
             holder.bind(product)
         }
 
