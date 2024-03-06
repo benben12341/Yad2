@@ -103,13 +103,13 @@ class UserProductsFragment : Fragment() {
             viewType: Int
         ): CardViewHolder {
             val view: View = layoutInflater.inflate(R.layout.item_card, parent, false)
-            return CardViewHolder(view, listener, context)
+            return CardViewHolder(view, listener!!, context!!)
         }
 
         // Replace the contents of a view (invoked by the layout manager)
         @RequiresApi(api = Build.VERSION_CODES.N)
         override fun onBindViewHolder(holder: CardViewHolder, position: Int) {
-            val product: Product = viewModel.getData().getValue().get(position)
+            val product: Product = viewModel!!.getData().getValue()!!.get(position)
             holder.bind(product)
         }
 

@@ -21,10 +21,9 @@ import com.example.yad2.R
 import com.example.yad2.models.Model
 import com.example.yad2.models.Model.ProductsListLoadingState
 import com.example.yad2.models.Product
-import com.example.yad2.models.ProductListRvViewModel
 import com.example.yad2.shared.CardViewHolder
 import com.example.yad2.shared.OnItemClickListener
-import com.example.yad2.HomeFragmentDirections
+import com.example.yad2.viewModels.ProductListRvViewModel
 
 class HomeFragment : Fragment() {
     var viewModel: ProductListRvViewModel? = null
@@ -119,7 +118,7 @@ class HomeFragment : Fragment() {
         @RequiresApi(api = Build.VERSION_CODES.N)
         override fun onBindViewHolder(holder: CardViewHolder, position: Int) {
             val product: Product? = viewModel?.data?.value?.get(position)
-            holder.bind(product)
+            holder.bind(product!!)
         }
     }
 }
