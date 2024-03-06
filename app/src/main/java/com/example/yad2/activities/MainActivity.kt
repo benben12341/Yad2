@@ -55,7 +55,7 @@ class MainActivity : AppCompatActivity() {
             val userName =
                 headerView!!.findViewById<TextView>(R.id.idUserName)
             userName.setText(user.firstName + " " + user.lastName)
-        }
+        } as (User?) -> Unit
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding!!.getRoot())
         setSupportActionBar(binding!!.appBarMain.findViewById(R.id.toolbar))
