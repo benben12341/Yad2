@@ -47,7 +47,7 @@ class UserProductsFragment : Fragment() {
         progressBar?.setVisibility(View.GONE)
         swipeRefresh = view.findViewById<SwipeRefreshLayout>(R.id.myproductslist_swiperefresh)
         swipeRefresh?.setOnRefreshListener { Model.instance.refreshProductsByMyUser() }
-        viewModel.refreshUserItems()
+        viewModel?.refreshUserItems()
         val add: FloatingActionButton =
             view.findViewById(R.id.addProductButton)
         add.setOnClickListener { v ->
