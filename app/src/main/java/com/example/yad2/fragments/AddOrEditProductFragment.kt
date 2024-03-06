@@ -53,22 +53,23 @@ class AddOrEditProductFragment : Fragment() {
     private var isEditMode = false
     private var currLocation: LatLng? = null
     private var progressBar: ProgressBar? = null
-    var title: TextInputEditText? = null
-    var gender: MaterialAutoCompleteTextView? = null
-    var category: MaterialAutoCompleteTextView? = null
-    var condition: MaterialAutoCompleteTextView? = null
-    var description: TextInputEditText? = null
-    var price: TextInputLayout? = null
-    var saveBtn: Button? = null
-    var productImage: ImageView? = null
-    var camBtn: FloatingActionButton? = null
-    var galleryBtn: FloatingActionButton? = null
-    var imageBitmap: Bitmap? = null
-    lateinit var categories: Array<String>
-    lateinit var genders: Array<String>
-    lateinit var states: Array<String>
-    var productId: String? = null
-    var isSold = false
+    private var title: TextInputEditText? = null
+    private var gender: MaterialAutoCompleteTextView? = null
+    private var category: MaterialAutoCompleteTextView? = null
+    private var condition: MaterialAutoCompleteTextView? = null
+    private var description: TextInputEditText? = null
+    private var price: TextInputLayout? = null
+    private var saveBtn: Button? = null
+    private var productImage: ImageView? = null
+    private var camBtn: FloatingActionButton? = null
+    private var galleryBtn: FloatingActionButton? = null
+    private var imageBitmap: Bitmap? = null
+    private lateinit var categories: Array<String>
+    private lateinit var genders: Array<String>
+    private lateinit var states: Array<String>
+    private var productId: String? = null
+    private var isSold = false
+    @SuppressLint("SetTextI18n")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -94,8 +95,8 @@ class AddOrEditProductFragment : Fragment() {
                 save()
             }
         }
-        camBtn?.setOnClickListener(View.OnClickListener { v: View? -> openCam() })
-        galleryBtn?.setOnClickListener(View.OnClickListener { v: View? -> openGallery() })
+        camBtn?.setOnClickListener { openCam() }
+        galleryBtn?.setOnClickListener { openGallery() }
         requestPermissions(
             arrayOf(
                 Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -117,7 +118,7 @@ class AddOrEditProductFragment : Fragment() {
                     val productPrice: String? = product.price
                     price?.editText?.setText(if (productPrice != null) product.price else "")
                     gender?.setText(
-                        gender?.getAdapter()?.getItem(
+                        gender?.adapter?.getItem(
                             Arrays.stream(genders).collect(Collectors.toList())
                                 .indexOf(product.gender)
                         ).toString(), false
@@ -147,24 +148,24 @@ class AddOrEditProductFragment : Fragment() {
     }
 
         private fun findAllElements(view: View) {
-            title = view.findViewById<TextInputEditText>(R.id.productTitle)
-            gender = view.findViewById<MaterialAutoCompleteTextView>(R.id.gender)
-            category = view.findViewById<MaterialAutoCompleteTextView>(R.id.category)
-            condition = view.findViewById<MaterialAutoCompleteTextView>(R.id.condition)
-            description = view.findViewById<TextInputEditText>(R.id.description)
-            price = view.findViewById<TextInputLayout>(R.id.productPrice)
-            saveBtn = view.findViewById<Button>(R.id.addProductBtn)
-            productImage = view.findViewById<ImageView>(R.id.productImage)
-            camBtn = view.findViewById<FloatingActionButton>(R.id.cameraBtn)
-            galleryBtn = view.findViewById<FloatingActionButton>(R.id.galleryBtn)
-            progressBar = view.findViewById<ProgressBar>(R.id.add_product_progressbar)
+            title = view.findViewById(R.id.productTitle)
+            gender = view.findViewById(R.id.gender)
+            category = view.findViewById(R.id.category)
+            condition = view.findViewById(R.id.condition)
+            description = view.findViewById(R.id.description)
+            price = view.findViewById(R.id.productPrice)
+            saveBtn = view.findViewById(R.id.addProductBtn)
+            productImage = view.findViewById(R.id.productImage)
+            camBtn = view.findViewById(R.id.cameraBtn)
+            galleryBtn = view.findViewById(R.id.galleryBtn)
+            progressBar = view.findViewById(R.id.add_product_progressbar)
             progressBar!!.visibility = View.GONE
         }
 
         private fun getStateDropdown(view: View) {
             val dropdown: AutoCompleteTextView =
-                view.findViewById<AutoCompleteTextView>(R.id.condition)
-            states = arrayOf<String>(
+                view.findViewById(R.id.condition)
+            states = arrayOf(
                 ProductCondition.GOOD_AS_NEW.toString(),
                 ProductCondition.GOOD.toString(),
                 ProductCondition.OK.toString()
@@ -174,8 +175,8 @@ class AddOrEditProductFragment : Fragment() {
 
         private fun getGenderDropdown(view: View) {
             val dropdown: AutoCompleteTextView =
-                view.findViewById<AutoCompleteTextView>(R.id.gender)
-            genders = arrayOf<String>(
+                view.findViewById(R.id.gender)
+            genders = arrayOf(
                 Gender.FEMALE.toString(),
                 Gender.MALE.toString(),
                 Gender.OTHER.toString()
@@ -185,8 +186,8 @@ class AddOrEditProductFragment : Fragment() {
 
         private fun getProductCategory(view: View) {
             val dropdown: AutoCompleteTextView =
-                view.findViewById<AutoCompleteTextView>(R.id.category)
-            categories = arrayOf<String>(
+                view.findViewById(R.id.category)
+            categories = arrayOf(
                 ProductCategory.PANTS.toString(),
                 ProductCategory.SHIRTS.toString(),
                 ProductCategory.SKIRTS.toString(),
@@ -199,8 +200,8 @@ class AddOrEditProductFragment : Fragment() {
         }
 
         private fun setDropdownAdapter(dropdown: AutoCompleteTextView, items: Array<String>) {
-            dropdown.setAdapter<ArrayAdapter<String>>(
-                ArrayAdapter<String>(
+            dropdown.setAdapter(
+                ArrayAdapter(
                     requireContext(),
                     R.layout.dropdown_item,
                     items
@@ -219,28 +220,28 @@ class AddOrEditProductFragment : Fragment() {
         private fun saveProduct(product: Product) {
             progressBar!!.visibility = View.VISIBLE
             if (imageBitmap == null) {
-                Model.instance.saveProduct(product, Model.AddProductListener {
+                Model.instance.saveProduct(product) {
                     progressBar!!.visibility = View.GONE
                     Toast.makeText(context, "saved product successfully!", Toast.LENGTH_LONG).show()
                     findNavController(title!!).navigateUp()
-                })
+                }
             } else {
                 Model.instance.saveProductImage(
                     imageBitmap!!,
-                    UUID.randomUUID().toString() + ".jpg",
-                    Model.SaveImageListener { url ->
-                        product.imageUrl = url
-                        Model.instance.saveProduct(product) {
-                            progressBar!!.visibility = View.GONE
-                            Toast.makeText(
-                                context,
-                                "saved product successfully!",
-                                Toast.LENGTH_LONG
-                            )
-                                .show()
-                            findNavController(title!!).navigateUp()
-                        }
-                    })
+                    UUID.randomUUID().toString() + ".jpg"
+                ) { url ->
+                    product.imageUrl = url
+                    Model.instance.saveProduct(product) {
+                        progressBar!!.visibility = View.GONE
+                        Toast.makeText(
+                            context,
+                            "saved product successfully!",
+                            Toast.LENGTH_LONG
+                        )
+                            .show()
+                        findNavController(title!!).navigateUp()
+                    }
+                }
             }
         }
 
@@ -275,13 +276,13 @@ class AddOrEditProductFragment : Fragment() {
     }
 
         private fun isInArray(array: Array<String>, string: String): Boolean {
-            return Arrays.asList(*array).contains(string)
+            return listOf(*array).contains(string)
         }
 
-        private fun openCam() {
-            val intent: Intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-            startActivityForResult(intent, REQUEST_CAMERA)
-        }
+    private fun openCam() {
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        startActivityForResult(intent, REQUEST_CAMERA)
+    }
 
         @SneakyThrows
         override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -314,7 +315,7 @@ class AddOrEditProductFragment : Fragment() {
 
         @get:SuppressLint("MissingPermission")
         private val currentLocation: Unit
-        private get () {
+        get () {
             if (ContextCompat.checkSelfPermission(
                     requireContext(),
                     Manifest.permission.ACCESS_FINE_LOCATION
@@ -359,7 +360,7 @@ class AddOrEditProductFragment : Fragment() {
             grantResults: IntArray
         ) {
             if (requestCode == 1337) {
-                if (grantResults.size > 0) {
+                if (grantResults.isNotEmpty()) {
                     currentLocation
                 }
             }
