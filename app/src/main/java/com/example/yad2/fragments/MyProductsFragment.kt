@@ -1,26 +1,25 @@
 package com.example.yad2.fragments
 
 import android.content.Context
-import android.view.LayoutInflater
 import android.os.Build
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.example.yad2.R
 import com.example.yad2.models.Model
 import com.example.yad2.models.Product
 import com.example.yad2.shared.CardViewHolder
 import com.example.yad2.shared.OnItemClickListener
 import com.example.yad2.viewModels.FavoriteProductListRvViewModel
-import com.example.yad2.R
 
 class MyProductsFragment : Fragment() {
     var viewModel: FavoriteProductListRvViewModel? = null
@@ -43,8 +42,8 @@ class MyProductsFragment : Fragment() {
         val list: RecyclerView = view.findViewById<RecyclerView>(R.id.like_products_itemslist_rv)
         progressBar = view.findViewById<ProgressBar>(R.id.favorite_products_progress_bar)
         progressBar?.visibility = View.GONE
-        view.findViewById<RecyclerView>(R.id.likedproductslist_swiperefresh).also { swipeRefresh = it }
-        swipeRefresh.setOnRefreshListener { Model.instance.refreshProductsILikedByUserList() }
+        view.findViewById<SwipeRefreshLayout>(R.id.likedproductslist_swiperefresh).also { swipeRefresh = it }
+        swipeRefresh?.setOnRefreshListener { Model.instance.refreshProductsILikedByUserList() }
         viewModel?.refreshFavoriteItems()
         list.setHasFixedSize(true)
         list.setLayoutManager(LinearLayoutManager(context))
@@ -53,7 +52,7 @@ class MyProductsFragment : Fragment() {
         setHasOptionsMenu(true)
         viewModel?.getData()?.observe(
             viewLifecycleOwner
-        ) { list1: List<Error?>? -> refresh() }
+        ) { list1: List<Product>? -> refresh() }
         adapter!!.setOnItemClickListener(object : OnItemClickListener {
             override fun onItemClick(v: View?, position: Int) {
                 val stId: String = viewModel?.getData()?.getValue()?.get(position)!!.id
@@ -77,6 +76,11 @@ class MyProductsFragment : Fragment() {
                 }
             }
         return view
+    }
+
+    private fun refresh() {
+        adapter!!.notifyDataSetChanged()
+        swipeRefresh?.setRefreshing(false)
     }
 
 
