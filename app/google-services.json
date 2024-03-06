@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "955836649319",
+    "project_id": "yad2-9d8f6",
+    "storage_bucket": "yad2-9d8f6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:955836649319:android:441803126f97ec662869c2",
+        "android_client_info": {
+          "package_name": "com.example.yad2"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAFbjrdfZ4pFDpWpoPBkldBf5sRoBfywBA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
