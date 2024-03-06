@@ -6,9 +6,9 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.location.Location
 import android.os.Bundle
 import android.provider.MediaStore
-import android.text.Editable
 import android.text.TextUtils
 import android.util.Log
 import android.view.LayoutInflater
@@ -17,11 +17,9 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Button
-import android.widget.EditText
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -30,7 +28,6 @@ import com.example.yad2.R
 import com.example.yad2.enums.Gender
 import com.example.yad2.enums.ProductCategory
 import com.example.yad2.enums.ProductCondition
-import com.example.yad2.interfaces.GetProductByIdListener
 import com.example.yad2.models.Model
 import com.example.yad2.models.Product
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -116,7 +113,7 @@ class AddOrEditProductFragment : Fragment() {
         productId?.let {
             Model.instance.getProductById(productId!!) {
                 fun onComplete(product: Product) {
-                    title?.text = product.title
+                    title?.setText(product.title)
                     val productPrice: String? = product.price
                     price?.editText?.setText(if (productPrice != null) product.price else "")
                     gender?.setText(
@@ -211,13 +208,13 @@ class AddOrEditProductFragment : Fragment() {
             )
         }
 
-        private fun save() {
-            saveBtn!!.isEnabled = false
-            camBtn?.setEnabled(false)
-            galleryBtn?.setEnabled(false)
-            val product: Product = getProduct(productId)
-            saveProduct(product)
-        }
+    private fun save() {
+        saveBtn!!.isEnabled = false
+        camBtn!!.isEnabled = false
+        galleryBtn!!.isEnabled = false
+        val product = getProduct(productId)
+        saveProduct(product)
+    }
 
         private fun saveProduct(product: Product) {
             progressBar!!.visibility = View.VISIBLE
@@ -247,30 +244,35 @@ class AddOrEditProductFragment : Fragment() {
             }
         }
 
-        private fun getProduct(id: String?): Product {
-            val key = id ?: FirebaseDatabase.getInstance().getReference().push().getKey()
-            return Product(
-                key,
-                Objects.requireNonNull<Editable>(title?.getText()).toString(),
-                if (description?.getText() != null) description!!.getText().toString() else "",
-                if (isInArray(genders, gender?.text.toString())) gender?.text
-                    .toString() else Gender.OTHER.toString(),
-                if (isInArray(states, condition?.text.toString())) condition?.text
-                    .toString() else ProductCondition.OK.toString(),
-                if (isInArray(
-                        categories,
-                        this.category?.getText().toString()
-                    )
-                ) this.category.getText()
-                    .toString() else ProductCategory.OTHER.toString(),
-                Objects.requireNonNull<EditText>(price?.editText).text.toString(),
-                Model.instance.mAuth.getUid(),
-                if (currLocation != null) currLocation!!.latitude else null,
-                if (currLocation != null) currLocation!!.longitude else null,
-                false,
-                if (isEditMode) isSold else false
-            )
-        }
+    private fun getProduct(id: String?): Product {
+        val key = id ?: FirebaseDatabase.getInstance().reference.push().key!!
+        return Product(
+            key,
+            Objects.requireNonNull(title!!.text).toString(),
+            if (description!!.text != null) description!!.text.toString() else "",
+            if (isInArray(
+                    genders,
+                    gender!!.text.toString()
+                )
+            ) gender!!.text.toString() else Gender.OTHER.toString(),
+            if (isInArray(
+                    states,
+                    condition!!.text.toString()
+                )
+            ) condition!!.text.toString() else ProductCondition.OK.toString(),
+            if (isInArray(
+                    categories,
+                    this.category!!.text.toString()
+                )
+            ) this.category!!.text.toString() else ProductCategory.OTHER.toString(),
+            Objects.requireNonNull(price!!.editText)?.text.toString(),
+            Model.instance.mAuth.uid,
+            if (currLocation != null) currLocation!!.latitude else null,
+            if (currLocation != null) currLocation!!.longitude else null,
+            false,
+            if (isEditMode) isSold else false
+        )
+    }
 
         private fun isInArray(array: Array<String>, string: String): Boolean {
             return Arrays.asList(*array).contains(string)
@@ -328,18 +330,22 @@ class AddOrEditProductFragment : Fragment() {
             ) {
                 try {
                     mFusedLocationProviderClient = LocationServices
-                        .getFusedLocationProviderClient(activity)
-                    mFusedLocationProviderClient.getCurrentLocation(
+                        .getFusedLocationProviderClient(requireActivity())
+                    mFusedLocationProviderClient!!.getCurrentLocation(
                         PRIORITY_HIGH_ACCURACY,
                         object : CancellationToken() {
-                            fun onCanceledRequested(onTokenCanceledListener: OnTokenCanceledListener): CancellationToken {
-                                return null
+                            override fun onCanceledRequested(p0: OnTokenCanceledListener): CancellationToken {
+                                TODO("Not yet implemented")
                             }
 
-                            val isCancellationRequested: Boolean
-                                get() = false
-                        }).addOnSuccessListener { location ->
-                        currLocation = LatLng(location.getLatitude(), location.getLongitude())
+                            override fun isCancellationRequested(): Boolean {
+                                return false
+                            }
+                        }).addOnSuccessListener { location: Location ->
+                        currLocation = LatLng(
+                            location.latitude,
+                            location.longitude
+                        )
                     }
                 } catch (error: Error) {
                     Log.e("LocationError", error.message!!)
