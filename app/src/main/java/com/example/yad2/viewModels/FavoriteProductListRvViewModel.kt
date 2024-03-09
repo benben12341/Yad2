@@ -15,9 +15,7 @@ class FavoriteProductListRvViewModel @RequiresApi(api = Build.VERSION_CODES.N) c
         data = Model.instance.getAllFavoriteProductsByUser()
     }
 
-    fun getData(): LiveData<List<Product>> {
-        return data
-    }
+
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     fun refreshFavoriteItems() {

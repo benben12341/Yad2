@@ -75,7 +75,7 @@ class AddOrEditProductFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val view: View = inflater.inflate(R.layout.fragment_add_or_edit_product, container, false)
-        productId = AddOrEditProductFragmentArgs.fromBundle(arguments).getProductId()
+        productId = AddOrEditProductFragmentArgs.fromBundle(requireArguments()).productId
         isEditMode = productId != null
         findAllElements(view)
         if (isEditMode) {

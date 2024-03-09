@@ -61,7 +61,7 @@ class UserProductsFragment : Fragment() {
         setHasOptionsMenu(true)
         adapter!!.setOnItemClickListener(object : OnItemClickListener {
             override fun onItemClick(v: View?, position: Int) {
-                val stId: String = viewModel?.getData()?.value?.get(position)?.id.toString()
+                val stId: String = viewModel?.data?.value?.get(position)?.id.toString()
                 findNavController(v!!).navigate(
                     UserProductsFragmentDirections.navMyProductsToNavProductDetails(
                         stId
@@ -69,7 +69,7 @@ class UserProductsFragment : Fragment() {
                 )
             }
         })
-        viewModel?.getData()?.observe(viewLifecycleOwner) { list1 -> refresh() }
+        viewModel?.data?.observe(viewLifecycleOwner) { list1 -> refresh() }
         swipeRefresh?.setRefreshing(
             Model.instance.productListLoadingState.value
                     === Model.ProductsListLoadingState.LOADING
@@ -109,13 +109,13 @@ class UserProductsFragment : Fragment() {
         // Replace the contents of a view (invoked by the layout manager)
         @RequiresApi(api = Build.VERSION_CODES.N)
         override fun onBindViewHolder(holder: CardViewHolder, position: Int) {
-            val product: Product = viewModel!!.getData().getValue()!!.get(position)
+            val product: Product = viewModel!!.data.getValue()!!.get(position)
             holder.bind(product)
         }
 
         override fun getItemCount(): Int {
-            if (viewModel?.getData()?.value == null) return 0
-            else return viewModel?.getData()?.value?.size!!.toInt()
+            if (viewModel?.data?.value == null) return 0
+            else return viewModel?.data?.value?.size!!.toInt()
         }
     }
 }

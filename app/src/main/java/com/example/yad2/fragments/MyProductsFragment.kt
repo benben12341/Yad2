@@ -46,12 +46,12 @@ class MyProductsFragment : Fragment() {
         adapter = MyAdapter()
         list.adapter = adapter
         setHasOptionsMenu(true)
-        viewModel?.getData()?.observe(
+        viewModel?.data?.observe(
             viewLifecycleOwner
         ) { refresh() }
         adapter!!.setOnItemClickListener(object : OnItemClickListener {
             override fun onItemClick(v: View?, position: Int) {
-                val stId: String = viewModel?.getData()?.value?.get(position)!!.id
+                val stId: String = viewModel?.data?.value?.get(position)!!.id
                 if (v != null) {
                     findNavController(v).navigate(
                         MyProductsFragmentDirections.navLikedProductsToNavProductDetails(
@@ -97,12 +97,12 @@ class MyProductsFragment : Fragment() {
         }
 
         override fun onBindViewHolder(holder: CardViewHolder, position: Int) {
-            val product: Product = viewModel?.getData()?.value?.get(position)!!
+            val product: Product = viewModel?.data?.value?.get(position)!!
             holder.bind(product)
         }
 
         override fun getItemCount(): Int {
-            return if (viewModel?.getData()?.value == null) {
+            return if (viewModel?.data?.value == null) {
                 0
             } else viewModel?.data?.value?.size!!.toInt()
         }

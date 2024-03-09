@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
-        viewModel?.getData()?.observe(this) { user: User ->
+        viewModel?.getUserData()?.observe(this) { user: User ->
             val userImage =
                 headerView!!.findViewById<ImageView>(R.id.imageView)
             if (user.userImageUrl != null) {
@@ -55,7 +55,7 @@ class MainActivity : AppCompatActivity() {
             val userName =
                 headerView!!.findViewById<TextView>(R.id.idUserName)
             userName.setText(user.firstName + " " + user.lastName)
-        } as (User?) -> Unit
+        }
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding!!.getRoot())
         setSupportActionBar(binding!!.appBarMain.findViewById(R.id.toolbar))

@@ -39,7 +39,7 @@ open class ProductDetailsFragment : Fragment() {
     private var editButton: FloatingActionButton? = null
     private var deleteButton: FloatingActionButton? = null
     var progressBar: ProgressBar? = null
-    var view: View? = null
+    var fragmentView: View? = null
     private var removeFromFavorites: ImageView? = null
     private var addToFavorite: ImageView? = null
     private var viewModel: FavoriteProductListRvViewModel? = null
@@ -53,9 +53,9 @@ open class ProductDetailsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        view = inflater.inflate(R.layout.fragment_product_details, container, false)
-        val productId: String = ProductDetailsFragmentArgs.fromBundle(arguments).getProductId()
-        attachFragmentElement(view)
+        fragmentView = inflater.inflate(R.layout.fragment_product_details, container, false)
+        val productId: String = ProductDetailsFragmentArgs.fromBundle(requireArguments()).productId
+        attachFragmentElement(fragmentView)
         Model.instance.getProductById(productId
         ) { product ->
             if (product != null) {
@@ -71,11 +71,11 @@ open class ProductDetailsFragment : Fragment() {
                 favoritesHandler(product, productId)
             }
         }
-        return view
+        return fragmentView
     }
 
     private fun favoritesHandler(product: Product, productId: String) {
-        viewModel?.getData()?.observe(viewLifecycleOwner) { showFavoritesIcon(product) }
+        viewModel?.data?.observe(viewLifecycleOwner) { showFavoritesIcon(product) }
         if (!product.contactId?.let { isCurrentUserProduct(it) }!!) {
             addToFavorite = requireView().findViewById(R.id.add_to_favorite)
             removeFromFavorites = requireView().findViewById(R.id.in_favorite_icon)
@@ -243,7 +243,7 @@ open class ProductDetailsFragment : Fragment() {
 
     private fun showFavoritesIcon(product: Product) {
         if (!product.contactId?.let { isCurrentUserProduct(it) }!!) {
-            val favoritesProducts: List<String> = viewModel?.getData()?.value
+            val favoritesProducts: List<String> = viewModel?.data?.value
                 ?.map { it.id }
                 ?: emptyList()
             if (favoritesProducts.contains(product.id)) {

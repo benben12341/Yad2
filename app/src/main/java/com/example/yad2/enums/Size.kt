@@ -12,18 +12,14 @@ enum class Size(val productSize: String) {
     XXL("XXL");
 
 
-    private var sizeString: String? = null
-
-    open fun getProductSize(): String? {
-        return sizeString
-    }
+    private var sizeString: String = toString()
 
     @SuppressLint("NotConstructor")
-    open fun Size(genderString: String?) {
+    open fun Size(genderString: String) {
         sizeString = genderString
     }
 
     override fun toString(): String {
-        return sizeString!!
+        return sizeString
     }
 }

@@ -11,8 +11,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.yad2.R
-import com.example.yad2.models.ProductListRvViewModel
 import com.example.yad2.models.cb.ProductSizeCB
+import com.example.yad2.viewModels.ProductListRvViewModel
 
 class SizeFragment : Fragment() {
     var types: List<ProductSizeCB>? = null
@@ -81,7 +81,7 @@ class SizeFragment : Fragment() {
         override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
             val productSizeFilterCB = types!![position]
             holder.cb.isChecked = productSizeFilterCB.isFlag
-            holder.cb.text = productSizeFilterCB.getProductSize()
+            holder.cb.text = productSizeFilterCB?.productSize
         }
 
         override fun getItemCount(): Int {
