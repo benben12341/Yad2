@@ -8,13 +8,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 
 class MainViewModel @RequiresApi(api = Build.VERSION_CODES.N) constructor() : ViewModel() {
-    var data: LiveData<User?>
+    var data: LiveData<User>
 
     init {
         data = Model.instance.loggedUser
     }
 
-    fun getData(): LiveData<User?> {
+    fun getUserData(): LiveData<User> {
         return data
     }
 }
