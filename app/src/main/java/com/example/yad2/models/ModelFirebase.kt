@@ -9,12 +9,10 @@ import com.example.yad2.interfaces.GetMyProductsListener
 import com.example.yad2.interfaces.GetProductByIdListener
 import com.example.yad2.interfaces.RemoveLikedProductsListener
 import com.example.yad2.models.Product.Companion.PRODUCTS_COLLECTION_NAME
-import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -119,50 +117,6 @@ class ModelFirebase {
             .addOnFailureListener { exception ->
                 optionalListener.onComplete(User("", "", "", "", "", "", ArrayList()))
             }
-    }
-
-    fun getProductSellerUser(id: String?, optionalListener: Model.GetLoggedUserListener): User? {
-        val user: Array<User?> = arrayOfNulls(1)
-        val docRef: DocumentReference = db.collection(User.COLLECTION_NAME)
-            .document(id!!)
-        docRef.get()
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val document: DocumentSnapshot = task.result!!
-                    if (document.exists()) {
-                        user[0] = document.toObject(User::class.java)
-                        user[0]?.id = document.id
-                    } else {
-                        Log.d("TAG", "No such document")
-                    }
-                    optionalListener.onComplete(user[0]!!)
-                } else {
-                    Log.d("TAG", "get failed with ", task.exception)
-                }
-            }
-        return user[0]
-    }
-
-    fun getUserO(id: String?, optionalListener: Model.GetLoggedUserListener): User? {
-        val user: Array<User?> = arrayOfNulls(1)
-        val docRef: DocumentReference = db.collection(User.COLLECTION_NAME)
-            .document(id!!)
-        docRef.get()
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val document: DocumentSnapshot = task.result!!
-                    if (document.exists()) {
-                        user[0] = document.toObject(User::class.java)
-                        user[0]?.id = document.id
-                    } else {
-                        Log.d("TAG", "No such document")
-                    }
-                    optionalListener.onComplete(user[0]!!)
-                } else {
-                    Log.d("TAG", "get failed with ", task.exception)
-                }
-            }
-        return user[0]
     }
 
     fun getAllProducts(lastUpdateDate: Long, listener: GetAllProductsListener): List<Product> {
