@@ -3,6 +3,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("com.google.gms.google-services")
     id("androidx.navigation.safeargs.kotlin")
+    id("kotlin-kapt")
 }
 
 android {
@@ -83,7 +84,6 @@ dependencies {
     implementation ("androidx.cardview:cardview:1.0.0")
     annotationProcessor ("com.github.bumptech.glide:compiler:4.12.0")
     implementation("com.google.firebase:firebase-auth-ktx:22.3.1")
-    implementation("androidx.room:room-common:2.6.1")
     implementation("com.google.firebase:firebase-storage-ktx:20.3.0")
     implementation("com.google.firebase:firebase-firestore-ktx:24.10.2")
     implementation("androidx.navigation:navigation-runtime-ktx:2.7.7")
@@ -92,6 +92,12 @@ dependencies {
     implementation ("com.google.android.material:material:1.5.0")
     implementation ("com.google.android.gms:play-services-tasks:18.0.1")
     implementation ("com.google.firebase:firebase-auth:21.0.1")
+    val room_version = "2.6.1"
+
+    implementation("androidx.room:room-runtime:$room_version")
+    annotationProcessor("androidx.room:room-compiler:$room_version")
+    kapt("androidx.room:room-compiler:$room_version")
+
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
