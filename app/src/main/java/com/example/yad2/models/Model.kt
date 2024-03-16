@@ -17,7 +17,7 @@ import com.google.firebase.auth.FirebaseAuth
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
-class Model private constructor() {
+class Model() {
     val executor: Executor = Executors.newFixedThreadPool(1)
     val modelFirebase: ModelFirebase = ModelFirebase()
     val productsList: MutableLiveData<List<Product>> = MutableLiveData()
@@ -62,6 +62,7 @@ class Model private constructor() {
     }
 
     fun getAll(): LiveData<List<Product>> {
+        Log.i("Main",productsList.value.toString())
         if (productsList.value == null) {
             categoriesFilterList.postValue(ArrayList())
             refreshProductsList()
@@ -119,7 +120,7 @@ class Model private constructor() {
                     lud = getProductsLastUpdateDate(lud, list)
                     updateLastLocalUpdateDate(lud)
                     val productList: List<Product> =
-                        (AppLocalDb.db.productDao()!!.all!! as List<Product>)
+                        (AppLocalDb.db.productDao()!!.all()!! as List<Product>)
                             .filter { product: Product ->
                                 !isLoggedUser(product) && isInFilters(
                                     product
@@ -208,8 +209,8 @@ class Model private constructor() {
         refreshLoggedUser()
     }
 
-    fun getUser(id: String, optionalListener: GetLoggedUserListener): User {
-        return modelFirebase.getUser(id, optionalListener)!!
+    fun getUser(id: String, optionalListener: GetLoggedUserListener) {
+        return modelFirebase.getUser(id, optionalListener)
     }
 
     fun refreshLoggedUser(): User? {

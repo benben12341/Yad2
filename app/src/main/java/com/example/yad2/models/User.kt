@@ -6,6 +6,7 @@ import androidx.room.PrimaryKey
 import lombok.AllArgsConstructor
 import lombok.Getter
 import lombok.NoArgsConstructor
+import lombok.NonNull
 import lombok.Setter
 import org.json.JSONException
 import org.json.JSONObject
@@ -16,17 +17,36 @@ import java.io.Serializable
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-class User(
-    var firstName: String?,
-    var lastName: String?,
-    var email: String?,
-    var phoneNumber: String?,
-    var address: String?,
-    var favoriteProducts: ArrayList<String>?
-) : Serializable {
+class User() : Serializable {
+
     @PrimaryKey
-    var id: String? = null
+    var id: String = ""
+    var firstName: String? = null
+    var lastName: String? = null
+    var email: String? = null
+    var phoneNumber: String? = null
+    var address: String? = null
+    var favoriteProducts: ArrayList<String>? = null
     var userImageUrl: String? = null
+
+    constructor(
+        id: String,
+        firstName: String?,
+        lastName: String?,
+        email: String?,
+        phoneNumber: String?,
+        address: String?,
+        favoriteProducts: ArrayList<String>?
+    ) : this() {
+        this.id = id
+        this.firstName = firstName
+        this.lastName = lastName
+        this.email = email
+        this.phoneNumber = phoneNumber
+        this.address = address
+        this.favoriteProducts = favoriteProducts
+    }
+
     fun toJson(): Map<String, Any?> {
         val json: MutableMap<String, Any?> = HashMap()
         json["firstName"] = firstName
@@ -41,9 +61,10 @@ class User(
 
     companion object {
         const val COLLECTION_NAME = "users"
+
         fun create(json: Map<String?, Any?>): User {
             val currentUser = JSONObject(json)
-            val id = json["id"] as String?
+            val id = json["id"] as String
             val firstName = json["firstName"] as String?
             val lastName = json["lastName"] as String?
             val address = json["address"] as String?
@@ -62,6 +83,7 @@ class User(
                 Log.d("error", "failed getting user favorite product")
             }
             return User(
+                id,
                 firstName,
                 lastName,
                 email,

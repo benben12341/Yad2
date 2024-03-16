@@ -103,6 +103,7 @@ class RegisterActivity : AppCompatActivity() {
                             // on below line we are checking if the task is success or not.
                             if (task.isSuccessful()) {
                                 val user = User(
+                                    mAuth!!.uid!!,
                                     firstName,
                                     lastName,
                                     email,

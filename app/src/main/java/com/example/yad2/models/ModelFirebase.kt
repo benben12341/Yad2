@@ -9,12 +9,16 @@ import com.example.yad2.interfaces.GetMyProductsListener
 import com.example.yad2.interfaces.GetProductByIdListener
 import com.example.yad2.interfaces.RemoveLikedProductsListener
 import com.example.yad2.models.Product.Companion.PRODUCTS_COLLECTION_NAME
+import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.Timestamp
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreSettings
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.storage.FirebaseStorage
@@ -24,8 +28,22 @@ import java.io.ByteArrayOutputStream
 import java.util.Objects
 
 class ModelFirebase {
-    private var db: FirebaseFirestore = FirebaseFirestore.getInstance()
-    private var storage: FirebaseStorage = FirebaseStorage.getInstance()
+    var db: FirebaseFirestore
+    var storage: FirebaseStorage
+    var mAuth: FirebaseAuth
+    var mUser: FirebaseUser?
+
+    init {
+        db = FirebaseFirestore.getInstance()
+        val settings: FirebaseFirestoreSettings = FirebaseFirestoreSettings.Builder()
+            .setPersistenceEnabled(true)
+            .build()
+        db.firestoreSettings = settings
+        storage = FirebaseStorage.getInstance()
+        mAuth = FirebaseAuth.getInstance()
+        mUser = mAuth.currentUser
+    }
+
 
     fun saveProduct(product: Product, listener: Model.AddProductListener) {
         val json: Map<String, Any?> = product.toJson()
@@ -56,10 +74,20 @@ class ModelFirebase {
     }
 
     fun addUser(user: User, id: String?) {
-        val json: Map<String, Any?> = user.toJson()
-        db.collection(User.COLLECTION_NAME)
-            .document(id!!)
-            .set(json)
+        try {
+            val json: Map<String, Any?> = user.toJson()
+            db.collection(User.COLLECTION_NAME)
+                .document(id!!)
+                .set(json)
+                .addOnSuccessListener {
+                    Log.d("Firestore", "User added successfully")
+                }
+                .addOnFailureListener { e ->
+                    Log.e("Firestore", "Error adding user", e)
+                }
+        } catch (e: Exception) {
+            Log.e("Firestore", "Exception while adding user", e)
+        }
     }
 
     fun updateUser(updatedUser: User, listener: Model.UpdateDataListener) {
@@ -70,28 +98,27 @@ class ModelFirebase {
             .addOnCompleteListener { listener.onComplete() }
     }
 
-    fun getUser(id: String?, optionalListener: Model.GetLoggedUserListener): User? {
-        val user: Array<User?> = arrayOfNulls(1)
-        if (id != null) {
-            val docRef: DocumentReference = db.collection(User.COLLECTION_NAME)
-                .document(id)
-            docRef.get()
-                .addOnCompleteListener { task ->
+    fun getUser(id: String, optionalListener: Model.GetLoggedUserListener) {
+        val documentRef = db.collection(User.COLLECTION_NAME).document(id)
+
+        documentRef.get()
+            .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        val document: DocumentSnapshot = task.result!!
-                        if (document.exists()) {
-                            user[0] = document.toObject(User::class.java)
-                            user[0]?.id = document.id
-                            optionalListener.onComplete(user[0]!!)
-                        } else {
-                            Log.d("TAG", "No such document")
-                        }
+                    val document = task.result
+                    if (document != null && document.exists()) {
+                        val user = document.toObject(User::class.java)
+                        user?.id = document.id
+                        optionalListener.onComplete(user ?: User("", "", "", "", "", "", ArrayList()))
                     } else {
-                        Log.d("TAG", "get failed with ", task.exception)
+                        optionalListener.onComplete(User("", "", "", "", "", "", ArrayList()))
                     }
+                } else {
+                    optionalListener.onComplete(User("", "", "", "", "", "", ArrayList()))
                 }
-        }
-        return user[0]
+            }
+            .addOnFailureListener { exception ->
+                optionalListener.onComplete(User("", "", "", "", "", "", ArrayList()))
+            }
     }
 
     fun getProductSellerUser(id: String?, optionalListener: Model.GetLoggedUserListener): User? {

@@ -9,18 +9,18 @@ import com.example.yad2.models.Product
 
 @Dao
 interface ProductDao {
-    @get:Query("select * from Product where isDeleted=0 and isSold=0 order by updateDate desc")
-    val all: List<Any?>?
+    @Query("select * from Product where isDeleted=0 and isSold=0 order by updateDate desc")
+    fun all(): List<Product?>?
 
     @Query("select * from Product where contactId=:id and isDeleted=0 order by updateDate desc")
     fun getProductsByContactId(id: String?): List<Product>?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAll(vararg products: Product?)
+    fun insertAll(vararg products: Product)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertProducts(products: List<Product?>?)
+    fun insertProducts(products: List<Product>)
 
     @Delete
-    fun delete(product: Product?)
+    fun delete(product: Product)
 }
