@@ -45,7 +45,7 @@ class FilterFragment : Fragment() {
         return view
     }
 
-    inner class MyViewHolder(itemView: View, listener: OnItemClickListener) :
+    inner class MyViewHolder(itemView: View, listener: OnItemClickListener?) :
         RecyclerView.ViewHolder(itemView) {
         var cb: CheckBox
 
@@ -63,7 +63,7 @@ class FilterFragment : Fragment() {
             })
             itemView.setOnClickListener { v ->
                 val pos: Int = getAdapterPosition()
-                listener.onItemClick(v, pos)
+                listener?.onItemClick(v, pos)
             }
         }
     }
@@ -75,7 +75,7 @@ class FilterFragment : Fragment() {
         ): MyViewHolder {
             val view: View =
                 layoutInflater.inflate(R.layout.product_type_checkbox, parent, false)
-            return MyViewHolder(view, listener!!)
+            return MyViewHolder(view, listener)
         }
 
         override fun getItemCount(): Int {
