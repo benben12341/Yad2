@@ -213,16 +213,16 @@ class Model() {
         return modelFirebase.getUser(id, optionalListener)
     }
 
-    fun refreshLoggedUser(): User? {
-        return modelFirebase.getUserO(mAuth.uid, object : GetLoggedUserListener {
+    private fun refreshLoggedUser() {
+        return modelFirebase.getUser(mAuth.uid!!, object : GetLoggedUserListener {
             override fun onComplete(user: User) {
                 loggedUser.postValue(user)
             }
         })
     }
 
-    fun getProductSellerUser(id: String, optionalListener: GetLoggedUserListener): User? {
-        return modelFirebase.getProductSellerUser(id, optionalListener)
+    fun getProductSellerUser(id: String, optionalListener: GetLoggedUserListener) {
+        return modelFirebase.getUser(id, optionalListener)
     }
 
     fun getProductById(productId: String, listener: GetProductByIdListener) {

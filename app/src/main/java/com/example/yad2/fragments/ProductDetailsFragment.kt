@@ -198,7 +198,7 @@ open class ProductDetailsFragment : Fragment() {
     }
 
     private fun attachFragmentElement(view: View?) {
-        imageUrl = requireView().findViewById(R.id.detailsProductImage)
+        imageUrl = view?.findViewById(R.id.detailsProductImage)
         title = view?.findViewById(R.id.detailsProductTitle)
         price = view?.findViewById(R.id.detailsProductPrice)
         gender = view?.findViewById(R.id.detailProductGender)
