@@ -56,23 +56,25 @@ open class ProductDetailsFragment : Fragment() {
         fragmentView = inflater.inflate(R.layout.fragment_product_details, container, false)
         val productId: String = ProductDetailsFragmentArgs.fromBundle(requireArguments()).productId
         attachFragmentElement(fragmentView)
-        Model.instance.getProductById(productId
-        ) { product ->
-            if (product != null) {
-                setFragmentElements(product)
-            }
-            if (product != null) {
-                displayOwnerButtons(product, productId)
-            }
-            if (product != null) {
-                getProductSeller(product)
-            }
-            if (product != null) {
-                favoritesHandler(product, productId)
+
+        // Define the lambda expression to handle the product retrieval
+        val getProductListener = object : Model.GetProductByIdListener {
+            override fun onComplete(product: Product) {
+                product.let {
+                    setFragmentElements(it)
+                    displayOwnerButtons(it, productId)
+                    getProductSeller(it)
+                    favoritesHandler(it, productId)
+                }
             }
         }
+
+        // Call the method with the defined lambda expression
+        Model.instance.getProductById(productId, getProductListener)
+
         return fragmentView
     }
+
 
     private fun favoritesHandler(product: Product, productId: String) {
         viewModel?.data?.observe(viewLifecycleOwner) { showFavoritesIcon(product) }

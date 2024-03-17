@@ -6,7 +6,6 @@ import com.example.yad2.interfaces.AddLikedProductListener
 import com.example.yad2.interfaces.GetAllProductsListener
 import com.example.yad2.interfaces.GetLikedProductsListener
 import com.example.yad2.interfaces.GetMyProductsListener
-import com.example.yad2.interfaces.GetProductByIdListener
 import com.example.yad2.interfaces.RemoveLikedProductsListener
 import com.example.yad2.models.Product.Companion.PRODUCTS_COLLECTION_NAME
 import com.google.android.gms.tasks.Task
@@ -146,7 +145,7 @@ class ModelFirebase {
         }
     }
 
-    fun getProductById(productId: String?, listener: GetProductByIdListener) {
+    fun getProductById(productId: String?, listener: Model.GetProductByIdListener) {
         db.collection(PRODUCTS_COLLECTION_NAME)
             .document(productId!!)
             .get()
@@ -158,7 +157,7 @@ class ModelFirebase {
                         product.id = task.result!!.id
                     }
                 }
-                listener.onComplete(product)
+                listener.onComplete(product!!)
             }
     }
 
