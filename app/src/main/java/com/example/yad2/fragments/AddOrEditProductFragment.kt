@@ -28,7 +28,9 @@ import com.example.yad2.R
 import com.example.yad2.enums.Gender
 import com.example.yad2.enums.ProductCategory
 import com.example.yad2.enums.ProductCondition
+import com.example.yad2.interfaces.GetProductByIdListener
 import com.example.yad2.models.Model
+import com.example.yad2.models.ModelFirebase
 import com.example.yad2.models.Product
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY
@@ -111,9 +113,9 @@ class AddOrEditProductFragment : Fragment() {
     }
 
     private fun setProductDetails() {
-        productId?.let {
-            Model.instance.getProductById(productId!!) {
-                fun onComplete(product: Product) {
+       productId?.let {
+            Model.instance.getProductById(productId!!, object: Model.GetProductByIdListener {
+              override fun onComplete(product: Product) {
                     title?.setText(product.title)
                     val productPrice: String? = product.price
                     price?.editText?.setText(if (productPrice != null) product.price else "")
@@ -143,7 +145,7 @@ class AddOrEditProductFragment : Fragment() {
                     }
                     isSold = product.isSold
                 }
-            }
+            })
         }
     }
 

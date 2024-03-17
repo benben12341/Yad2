@@ -11,7 +11,6 @@ import com.example.yad2.interfaces.AddLikedProductListener
 import com.example.yad2.interfaces.GetAllProductsListener
 import com.example.yad2.interfaces.GetLikedProductsListener
 import com.example.yad2.interfaces.GetMyProductsListener
-import com.example.yad2.interfaces.GetProductByIdListener
 import com.example.yad2.interfaces.RemoveLikedProductsListener
 import com.google.firebase.auth.FirebaseAuth
 import java.util.concurrent.Executor
@@ -50,6 +49,10 @@ class Model() {
 
     fun interface SaveImageListener {
         fun onComplete(url: String)
+    }
+
+    interface GetProductByIdListener {
+        fun onComplete(product: Product)
     }
 
     val favoritesProductsLoadingState: LiveData<ProductsListLoadingState>
@@ -226,7 +229,7 @@ class Model() {
     }
 
     fun getProductById(productId: String, listener: GetProductByIdListener) {
-        modelFirebase.getProductById(productId, listener)
+       return modelFirebase.getProductById(productId, listener)
     }
 
     fun removeFromLikedProducts(
