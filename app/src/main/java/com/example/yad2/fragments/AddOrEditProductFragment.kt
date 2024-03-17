@@ -28,9 +28,7 @@ import com.example.yad2.R
 import com.example.yad2.enums.Gender
 import com.example.yad2.enums.ProductCategory
 import com.example.yad2.enums.ProductCondition
-import com.example.yad2.interfaces.GetProductByIdListener
 import com.example.yad2.models.Model
-import com.example.yad2.models.ModelFirebase
 import com.example.yad2.models.Product
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY

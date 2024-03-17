@@ -25,13 +25,12 @@ import java.io.ByteArrayOutputStream
 import java.util.Objects
 
 class ModelFirebase {
-    var db: FirebaseFirestore
-    var storage: FirebaseStorage
-    var mAuth: FirebaseAuth
-    var mUser: FirebaseUser?
+    private var db: FirebaseFirestore = FirebaseFirestore.getInstance()
+    private var storage: FirebaseStorage
+    private var mAuth: FirebaseAuth
+    private var mUser: FirebaseUser?
 
     init {
-        db = FirebaseFirestore.getInstance()
         val settings: FirebaseFirestoreSettings = FirebaseFirestoreSettings.Builder()
             .setPersistenceEnabled(true)
             .build()
@@ -40,7 +39,6 @@ class ModelFirebase {
         mAuth = FirebaseAuth.getInstance()
         mUser = mAuth.currentUser
     }
-
 
     fun saveProduct(product: Product, listener: Model.AddProductListener) {
         val json: Map<String, Any?> = product.toJson()
@@ -90,7 +88,7 @@ class ModelFirebase {
     fun updateUser(updatedUser: User, listener: Model.UpdateDataListener) {
         val json: Map<String, Any?> = updatedUser.toJson()
         db.collection(User.COLLECTION_NAME)
-            .document(updatedUser.id.toString())
+            .document(updatedUser.id)
             .set(json)
             .addOnCompleteListener { listener.onComplete() }
     }
@@ -113,7 +111,7 @@ class ModelFirebase {
                     optionalListener.onComplete(User("", "", "", "", "", "", ArrayList()))
                 }
             }
-            .addOnFailureListener { exception ->
+            .addOnFailureListener {
                 optionalListener.onComplete(User("", "", "", "", "", "", ArrayList()))
             }
     }

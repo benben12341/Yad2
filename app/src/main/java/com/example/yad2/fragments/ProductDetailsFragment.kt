@@ -39,7 +39,7 @@ open class ProductDetailsFragment : Fragment() {
     private var editButton: FloatingActionButton? = null
     private var deleteButton: FloatingActionButton? = null
     var progressBar: ProgressBar? = null
-    var fragmentView: View? = null
+    private var fragmentView: View? = null
     private var removeFromFavorites: ImageView? = null
     private var addToFavorite: ImageView? = null
     private var viewModel: FavoriteProductListRvViewModel? = null
@@ -57,7 +57,6 @@ open class ProductDetailsFragment : Fragment() {
         val productId: String = ProductDetailsFragmentArgs.fromBundle(requireArguments()).productId
         attachFragmentElement(fragmentView)
 
-        // Define the lambda expression to handle the product retrieval
         val getProductListener = object : Model.GetProductByIdListener {
             override fun onComplete(product: Product) {
                 product.let {
@@ -69,12 +68,10 @@ open class ProductDetailsFragment : Fragment() {
             }
         }
 
-        // Call the method with the defined lambda expression
         Model.instance.getProductById(productId, getProductListener)
 
         return fragmentView
     }
-
 
     private fun favoritesHandler(product: Product, productId: String) {
         viewModel?.data?.observe(viewLifecycleOwner) { showFavoritesIcon(product) }
@@ -99,7 +96,6 @@ open class ProductDetailsFragment : Fragment() {
             })
         }
     }
-
 
     private fun handleAddToFavorites(productId: String) {
         addToFavorite?.setOnClickListener {
