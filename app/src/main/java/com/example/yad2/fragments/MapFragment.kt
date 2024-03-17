@@ -127,7 +127,7 @@ class MapFragment : Fragment() {
                     PRIORITY_HIGH_ACCURACY,
                     object : CancellationToken() {
                         override fun onCanceledRequested(p0: OnTokenCanceledListener): CancellationToken {
-                            TODO("Not yet implemented")
+                            return this
                         }
 
                         override fun isCancellationRequested(): Boolean {
