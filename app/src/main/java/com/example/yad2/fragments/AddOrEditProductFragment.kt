@@ -48,6 +48,7 @@ import java.util.Objects
 import java.util.UUID
 import java.util.stream.Collectors
 
+@Suppress("DEPRECATION")
 class AddOrEditProductFragment : Fragment() {
     private var mFusedLocationProviderClient: FusedLocationProviderClient? = null
     private var isEditMode = false
@@ -336,7 +337,7 @@ class AddOrEditProductFragment : Fragment() {
                         PRIORITY_HIGH_ACCURACY,
                         object : CancellationToken() {
                             override fun onCanceledRequested(p0: OnTokenCanceledListener): CancellationToken {
-                                TODO("Not yet implemented")
+                                return this
                             }
 
                             override fun isCancellationRequested(): Boolean {
