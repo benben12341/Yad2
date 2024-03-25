@@ -10,7 +10,7 @@ import com.example.yad2.models.User
 import com.example.yad2.models.dao.ProductDao
 import com.example.yad2.models.dao.UserDao
 
-@Database(entities = [Product::class, User::class], version = 185)
+@Database(entities = [Product::class, User::class], version = 186)
 @TypeConverters(*[Convertors::class])
 abstract class AppLocalDbRepository : RoomDatabase() {
     abstract fun productDao(): ProductDao?
