@@ -23,13 +23,15 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import androidx.navigation.Navigation.findNavController
 import com.example.yad2.R
 import com.example.yad2.enums.Gender
-import com.example.yad2.enums.ProductCategory
 import com.example.yad2.enums.ProductCondition
 import com.example.yad2.models.Model
 import com.example.yad2.models.Product
+import com.example.yad2.models.api.ProductCategoryApiModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY
 import com.google.android.gms.location.LocationServices
@@ -188,16 +190,13 @@ class AddOrEditProductFragment : Fragment() {
         private fun getProductCategory(view: View) {
             val dropdown: AutoCompleteTextView =
                 view.findViewById(R.id.category)
-            categories = arrayOf(
-                ProductCategory.PANTS.toString(),
-                ProductCategory.SHIRTS.toString(),
-                ProductCategory.SKIRTS.toString(),
-                ProductCategory.DRESSES.toString(),
-                ProductCategory.JUMPERS.toString(),
-                ProductCategory.ACCESSORIES.toString(),
-                ProductCategory.OTHER.toString()
-            )
-            setDropdownAdapter(dropdown, categories)
+            val data: LiveData<List<String>> = ProductCategoryApiModel.instance().productCategories
+            data.observe(
+                viewLifecycleOwner,
+                Observer<List<String>> { productCategories: List<String> ->
+                    categories = productCategories.toTypedArray();
+                    setDropdownAdapter(dropdown, productCategories.toTypedArray())
+                })
         }
 
         private fun setDropdownAdapter(dropdown: AutoCompleteTextView, items: Array<String>) {
@@ -266,7 +265,7 @@ class AddOrEditProductFragment : Fragment() {
                     categories,
                     this.category!!.text.toString()
                 )
-            ) this.category!!.text.toString() else ProductCategory.OTHER.toString(),
+            ) this.category!!.text.toString() else "men's clothing",
             Objects.requireNonNull(price!!.editText)?.text.toString(),
             Model.instance.mAuth.uid,
             if (currLocation != null) currLocation!!.latitude else null,

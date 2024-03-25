@@ -92,6 +92,9 @@ dependencies {
     implementation ("com.google.android.material:material:1.5.0")
     implementation ("com.google.android.gms:play-services-tasks:18.0.1")
     implementation ("com.google.firebase:firebase-auth:21.0.1")
+    implementation("com.squareup.retrofit2:converter-gson:2.5.0")
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     val room_version = "2.6.1"
 
     implementation("androidx.room:room-runtime:$room_version")

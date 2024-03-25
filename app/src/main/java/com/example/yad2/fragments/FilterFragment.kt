@@ -8,12 +8,15 @@ import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.CompoundButton
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.yad2.viewModels.ProductListRvViewModel
 import com.example.yad2.R
 import com.example.yad2.interfaces.OnItemClickListener
+import com.example.yad2.models.api.ProductCategoryApiModel
 import com.example.yad2.models.cb.ProductFilterCB
 
 class FilterFragment : Fragment() {
@@ -33,7 +36,15 @@ class FilterFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view: View = inflater.inflate(R.layout.filter_fragment, container, false)
-        types = ProductFilterCB.allCheckboxTypes
+        val data: LiveData<List<String>> = ProductCategoryApiModel.instance().productCategories
+        val productSizeFilterCBList: MutableList<ProductFilterCB> = mutableListOf();
+        data.observe(
+            viewLifecycleOwner,
+            Observer<List<String>> { productCategories: List<String> ->
+                productCategories.forEachIndexed { index, s ->  productSizeFilterCBList.add(index,
+                    ProductFilterCB(s))};
+                types = productSizeFilterCBList;
+            })
         val list: RecyclerView = view.findViewById<RecyclerView>(R.id.itemslist_rv)
         list.setHasFixedSize(true)
         list.setLayoutManager(LinearLayoutManager(context))
